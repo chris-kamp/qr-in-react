@@ -6,7 +6,15 @@ export default function stateReducer(currentState, action) {
       localStorage.setItem("session", JSON.stringify(action.session))
       return {
         ...currentState,
-        session: action.session
+        session: action.session,
+      }
+    }
+
+    case "logout": {
+      localStorage.removeItem("session")
+      return {
+        ...currentState,
+        session: null,
       }
     }
 
