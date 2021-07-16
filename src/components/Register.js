@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import { useHistory } from "react-router-dom"
 import { PageHeader } from "../styled-components/GeneralStyledComponents"
 import { ErrorText } from "../styled-components/FormStyledComponents"
+import { usernameValidator, passwordValidator, emailValidator } from "../utils/Validators"
 
 const Register = () => {
   const [signupFailureMessage, setSignupFailureMessage] = useState()
@@ -31,6 +32,7 @@ const Register = () => {
       .catch((error) => {
         // Display error messages - handles unauthorized, or other uncategorised error
         setSignupFailureMessage("Something went wrong. Try signing up again.")
+        console.log(errors)
       })
   }
 
@@ -40,15 +42,18 @@ const Register = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label htmlFor="email">Email</label>
-          <input type="text" id="email" {...register("email")} />
+          <input type="text" id="email" {...register("email", emailValidator)} autoFocus />
+          {errors.email && (<ErrorText>Invalid email address</ErrorText>)}
         </div>
         <div>
           <label htmlFor="username">Username</label>
-          <input type="text" id="username" {...register("username")} />
+          <input type="text" id="username" {...register("username", usernameValidator)} />
+          {errors.username && (<ErrorText>Invalid username</ErrorText>)}
         </div>
         <div>
           <label htmlFor="password">Password</label>
-          <input type="password" id="password" {...register("password")} />
+          <input type="password" id="password" {...register("password", passwordValidator)} />
+          {errors.password && (<ErrorText>Invalid password</ErrorText>)}
         </div>
         {signupFailureMessage && (
           <ErrorText>Login failed: {signupFailureMessage}</ErrorText>

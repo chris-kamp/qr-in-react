@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import { useHistory } from "react-router-dom"
 import { PageHeader } from "../styled-components/GeneralStyledComponents"
 import { ErrorText } from "../styled-components/FormStyledComponents"
+import { passwordValidator, emailValidator } from "../utils/Validators"
 
 const loginFailureMessages = {
   unauthorised: "Username or password incorrect",
@@ -46,11 +47,13 @@ const Login = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label htmlFor="email">Email</label>
-          <input type="text" id="email" {...register("email")} />
+          <input type="text" id="email" {...register("email", emailValidator)} autoFocus />
+          {errors.email && (<ErrorText>Invalid email address</ErrorText>)}
         </div>
         <div>
           <label htmlFor="password">Password</label>
-          <input type="password" id="password" {...register("password")} />
+          <input type="password" id="password" {...register("password", passwordValidator)} />
+          {errors.password && (<ErrorText>Invalid password</ErrorText>)}
         </div>
         {loginFailureMessage && (
           <ErrorText>Login failed: {loginFailureMessage}</ErrorText>
