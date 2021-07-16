@@ -1,8 +1,72 @@
+import { useEffect, useState } from "react"
+import styled from "styled-components"
+import { useForm } from "react-hook-form"
+import axios from "axios"
+import { useHistory } from "react-router-dom"
+
+const PageHeader = styled.h1`
+  text-align: center;
+`
+
+const ErrorText = styled.p`
+  color: red;
+  margin: 0;
+  padding: 0;
+`
+
+const loginFailureMessages = {
+  unauthorised: "Username or password incorrect",
+  other: "Something went wrong. Try logging in again."
+}
+
 const Login = () => {
+  const [loginFailureMessage, setLoginFailureMessage] = useState();
+
+  const history = useHistory();
+  // react-hook-form setup
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
+
+  // Handle login form submission
+  const onSubmit = (data) => {
+    // Post form data to login route
+    axios
+      .post(`${process.env.REACT_APP_API_ENDPOINT}/users/login`, data)
+      .then((response) => {
+        // Set "session" in localstorage with token from response
+        localStorage.setItem("session", response.data.token)
+        // Remove login failure message on successful login
+        setLoginFailureMessage(null)
+        // Redirect to home
+        history.push("/")
+      })
+      .catch(error => {
+        // Display error messages - handles unauthorized, or other uncategorised error
+        error.response?.status === 401 ? setLoginFailureMessage(loginFailureMessages.unauthorised) : setLoginFailureMessage(loginFailureMessages.other)
+      })
+  }
+
   return (
-    <div>
-      <h1>Login</h1>
-    </div>
+    <>
+      <PageHeader>Login</PageHeader>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div>
+          <label htmlFor="email">Email</label>
+          <input type="text" id="email" {...register("email")} />
+        </div>
+        <div>
+          <label htmlFor="password">Password</label>
+          <input type="password" id="password" {...register("password")} />
+        </div>
+        {loginFailureMessage && (
+          <ErrorText>Login failed: {loginFailureMessage}</ErrorText>
+        )}
+        <input type="submit" />
+      </form>
+    </>
   )
 }
 
