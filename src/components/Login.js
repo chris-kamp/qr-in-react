@@ -1,18 +1,9 @@
 import { useEffect, useState } from "react"
-import styled from "styled-components"
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import { useHistory } from "react-router-dom"
-
-const PageHeader = styled.h1`
-  text-align: center;
-`
-
-const ErrorText = styled.p`
-  color: red;
-  margin: 0;
-  padding: 0;
-`
+import { PageHeader } from "../styled-components/GeneralStyledComponents"
+import { ErrorText } from "../styled-components/FormStyledComponents"
 
 const loginFailureMessages = {
   unauthorised: "Username or password incorrect",
