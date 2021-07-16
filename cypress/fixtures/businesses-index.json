@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "category_id": 1,
+    "user_id": 1,
+    "name": "An Example Business!",
+    "description": "This is an example business",
+    "created_at": "2021-07-16T04:18:17.654Z",
+    "updated_at": "2021-07-16T04:18:17.654Z",
+    "address": {
+      "street": "123 Coder St",
+      "suburb": {
+        "name": "Brisbane"
+      },
+      "postcode": {
+        "code": 4444
+      },
+      "state": {
+        "name": "QLD"
+      }
+    },
+    "category": {
+      "name": "Cafe"
+    }
+  },
+  {
+    "id": 2,
+    "category_id": 2,
+    "user_id": 2,
+    "name": "Another Example Business",
+    "description": "This is yet another example business!",
+    "created_at": "2021-07-16T03:24:40.990Z",
+    "updated_at": "2021-07-16T03:24:40.990Z",
+    "address": {
+      "street": "456 Business Rd",
+      "suburb": {
+        "name": "Brisbane"
+      },
+      "postcode": {
+        "code": 4545
+      },
+      "state": {
+        "name": "QLD"
+      }
+    },
+    "category": {
+      "name": "Bar"
+    }
+  }
+]
