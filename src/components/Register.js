@@ -1,14 +1,20 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import { useHistory } from "react-router-dom"
 import { PageHeader } from "../styled-components/GeneralStyledComponents"
 import { ErrorText } from "../styled-components/FormStyledComponents"
-import { usernameValidator, passwordValidator, emailValidator } from "../utils/Validators"
+import {
+  usernameValidator,
+  passwordValidator,
+  emailValidator,
+} from "../utils/Validators"
+import { stateContext } from "../stateReducer"
 
 const Register = () => {
   const [signupFailureMessage, setSignupFailureMessage] = useState()
   const history = useHistory()
+  const { dispatch } = useContext(stateContext)
   // react-hook-form setup
   const {
     register,
@@ -22,8 +28,11 @@ const Register = () => {
     axios
       .post(`${process.env.REACT_APP_API_ENDPOINT}/users/register`, data)
       .then((response) => {
-        // Set "session" in localstorage with token from response
-        localStorage.setItem("session", response.data.token)
+        // Update state context with token and user details from API response
+        dispatch({
+          type: "login",
+          session: { token: response.data.token, user: response.data.user },
+        })
         // Remove signup failure message on successful signup
         setSignupFailureMessage(null)
         // Redirect to home
@@ -42,18 +51,31 @@ const Register = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label htmlFor="email">Email</label>
-          <input type="text" id="email" {...register("email", emailValidator)} autoFocus />
-          {errors.email && (<ErrorText>Invalid email address</ErrorText>)}
+          <input
+            type="text"
+            id="email"
+            {...register("email", emailValidator)}
+            autoFocus
+          />
+          {errors.email && <ErrorText>Invalid email address</ErrorText>}
         </div>
         <div>
           <label htmlFor="username">Username</label>
-          <input type="text" id="username" {...register("username", usernameValidator)} />
-          {errors.username && (<ErrorText>Invalid username</ErrorText>)}
+          <input
+            type="text"
+            id="username"
+            {...register("username", usernameValidator)}
+          />
+          {errors.username && <ErrorText>Invalid username</ErrorText>}
         </div>
         <div>
           <label htmlFor="password">Password</label>
-          <input type="password" id="password" {...register("password", passwordValidator)} />
-          {errors.password && (<ErrorText>Invalid password</ErrorText>)}
+          <input
+            type="password"
+            id="password"
+            {...register("password", passwordValidator)}
+          />
+          {errors.password && <ErrorText>Invalid password</ErrorText>}
         </div>
         {signupFailureMessage && (
           <ErrorText>Login failed: {signupFailureMessage}</ErrorText>
