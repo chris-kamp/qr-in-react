@@ -20,7 +20,7 @@ const Businesses = () => {
       <br />
       { businesses.map(business => (
         <>
-          <BusinessCard business={business} />
+          <BusinessCard key={business.id} business={business} />
         </>
       )
       )}

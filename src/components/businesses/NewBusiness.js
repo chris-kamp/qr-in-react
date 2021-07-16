@@ -43,7 +43,7 @@ const NewBusiness = () => {
         <div>
           <label htmlFor="business.category_id">Category</label>
           <select {...register('business.category_id')}>
-            {categories.map(category => <option value={category.id}>{category.name}</option>)}
+            {categories.map(category => <option key={category.id} value={category.id}>{category.name}</option>)}
           </select>
         </div>
 
