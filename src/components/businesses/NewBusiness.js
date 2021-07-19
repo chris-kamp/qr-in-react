@@ -1,13 +1,18 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { stateContext } from "../../stateReducer"
 import LocationSearchInput from './LocationSearchInput';
+import { PageHeader } from '../../styled-components/GeneralStyledComponents';
 
 const NewBusiness = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const onSubmit = data => createBusiness(data);
   const [checked, setChecked] = useState(false);
   const [categories, setCategories] = useState([]);
+
+  const context = useContext(stateContext);
+  console.debug(context.session)
 
   const handleCheck = event => {
     setChecked(event.target.checked);
@@ -28,7 +33,7 @@ const NewBusiness = () => {
 
   return (
     <div>
-      <h1>New Business</h1>
+      <PageHeader>New Business</PageHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label htmlFor="business.name">Name</label>

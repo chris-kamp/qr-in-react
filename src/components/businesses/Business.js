@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { PageHeader } from '../../styled-components/GeneralStyledComponents';
 
 const Business = () => {
   const [business, setBusiness] = useState(false);
@@ -15,7 +16,7 @@ const Business = () => {
 
   return (
     <div>
-      <h1>Business</h1>
+      <PageHeader>Business</PageHeader>
       { business &&
         <>
           <h2>{business.name}</h2>
