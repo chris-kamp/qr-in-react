@@ -1,13 +1,13 @@
 import React, { useReducer, useEffect } from "react"
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom"
-import Home from "./components/Home"
-import Businesses from "./components/Businesses"
-import Business from "./components/Business"
-import Checkin from "./components/Checkin"
-import Login from "./components/Login"
-import NewBusiness from "./components/NewBusiness"
-import Profile from "./components/Profile"
-import Register from "./components/Register"
+import Home from './components/Home';
+import Businesses from './components/businesses/Businesses';
+import Business from './components/businesses/Business';
+import NewBusiness from './components/businesses/NewBusiness';
+import Checkin from './components/Checkin';
+import Login from './components/Login';
+import Profile from './components/Profile';
+import Register from './components/Register';
 import stateReducer, { stateContext } from "./stateReducer"
 
 function App() {
