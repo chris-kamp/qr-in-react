@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import BusinessCard from './BusinessCard';
-import BusinessSearchFilter from './BusinessSearchFilter';
+import { Heading, Columns } from 'react-bulma-components';
 
 const Businesses = () => {
   const [businesses, setBusinesses] = useState([]);
@@ -14,17 +14,16 @@ const Businesses = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Browse Businesses</h1>
-      <BusinessSearchFilter />
-      <br />
-      { businesses.map(business => (
-        <>
-          <BusinessCard key={business.id} business={business} />
-        </>
-      )
-      )}
-    </div>
+    <React.Fragment>
+      <Heading>Browse Businesses</Heading>
+      <Columns>
+        {businesses.map(business => (
+          <Columns.Column key={business.id}>
+            <BusinessCard key={business.id} business={business}></BusinessCard>
+          </Columns.Column>
+        ))}
+      </Columns>
+    </React.Fragment>
   )
 }
 
