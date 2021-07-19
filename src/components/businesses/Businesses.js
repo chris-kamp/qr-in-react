@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import BusinessCard from './BusinessCard';
 import { Heading, Columns } from 'react-bulma-components';
-import 'bulma/css/bulma.min.css'
 
 const Businesses = () => {
   const [businesses, setBusinesses] = useState([]);

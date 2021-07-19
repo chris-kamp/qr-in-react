@@ -9,6 +9,7 @@ import Login from './components/Login';
 import Profile from './components/Profile';
 import Register from './components/Register';
 import stateReducer, { stateContext } from "./stateReducer"
+import 'bulma/css/bulma.min.css'
 
 function App() {
   const [store, dispatch] = useReducer(stateReducer, {
