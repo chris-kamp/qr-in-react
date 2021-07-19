@@ -29,6 +29,7 @@ const Register = () => {
       .post(`${process.env.REACT_APP_API_ENDPOINT}/users/register`, data)
       .then((response) => {
         // Update state context with token and user details from API response
+        console.log(response.data)
         dispatch({
           type: "login",
           session: { token: response.data.token, user: response.data.user },
