@@ -1,27 +1,39 @@
 import axios from 'axios';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { stateContext } from "../../stateReducer"
-import LocationSearchInput from './LocationSearchInput';
-import { PageHeader } from '../../styled-components/GeneralStyledComponents';
+import LocationAutocomplete from './LocationAutocomplete';
+import { Heading, Card } from 'react-bulma-components';
+import { Button } from 'react-bulma-components';
 
 const NewBusiness = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const onSubmit = data => createBusiness(data);
   const [checked, setChecked] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [business, setBusiness] = useState({})
 
-  const context = useContext(stateContext);
-  console.debug(context.session)
-
-  const handleCheck = event => {
-    setChecked(event.target.checked);
+  const addressCallback = (address) => {
+    console.debug(address)
   }
 
+  const context = useContext(stateContext);
+
+  const handleCheck = event => setChecked(event.target.checked);
+
   const createBusiness = (payload) => {
-    payload.business.user_id = 3;
-    console.debug(payload);
-    axios.post(`${process.env.REACT_APP_API_ENDPOINT}/businesses`, payload);
+    // Set the user_id of the business to the current user in session.
+    payload.business.user_id = context.session.user.id
+
+    // Post form data to the business route.
+    axios
+      .post(`${process.env.REACT_APP_API_ENDPOINT}/businesses`, payload)
+      .then((response) => {
+        console.debug(response.data)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   useEffect(() => {
@@ -32,63 +44,108 @@ const NewBusiness = () => {
   }, []);
 
   return (
-    <div>
-      <PageHeader>New Business</PageHeader>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="business.name">Name</label>
-          <input {...register('business.name')} />
-        </div>
+    <React.Fragment>
+      <Card>
+        <Card.Header.Title>New Business</Card.Header.Title>
+        <Card.Content>
+          <form onSubmit={handleSubmit(onSubmit)}>
 
-        <div>
-          <label htmlFor="business.description">Description</label>
-          <input {...register('business.description')} />
-        </div>
+            <Heading size={5}>Business details</Heading>
 
-        <div>
-          <label htmlFor="business.category_id">Category</label>
-          <select {...register('business.category_id')}>
-            {categories.map(category => <option key={category.id} value={category.id}>{category.name}</option>)}
-          </select>
-        </div>
-
-        { !checked && (
-            <LocationSearchInput />
-          )
-        }
-
-        <div>
-          <label htmlFor="_useManualAddress">Enter address manually?</label>
-          <input id="_useManualAddress" onChange={handleCheck} type="checkbox" />
-        </div>
-
-        { checked &&
-          <>
-            <div>
-              <label htmlFor="business.address.street">Street Address</label>
-              <input {...register('business.address.street')} />
+            <div className="control">
+              <label className="label" htmlFor="business.name">Name</label>
+              <input
+                className="input"
+                type="text"
+                id="name"
+                {...register('business.name')}
+              />
             </div>
 
-            <div>
-              <label htmlFor="business.address.suburb">Suburb</label>
-              <input {...register('business.address.suburb')} />
+            <div className="control">
+              <label className="label" htmlFor="business.description">Description</label>
+              <input
+                className="input"
+                type="text"
+                id="description"
+                {...register('business.description')}
+              />
             </div>
 
-            <div>
-              <label htmlFor="business.address.postcode">Postcode</label>
-              <input {...register('business.address.postcode')} />
+            <div className="control">
+              <label className="label" htmlFor="business.category_id">Category</label>
+              <select className="select is-primary" {...register('business.category_id')}>
+                {categories.map(category => <option key={category.id} value={category.id}>{category.name}</option>)}
+              </select>
             </div>
 
-            <div>
-              <label htmlFor="business.address.state">State</label>
-              <input {...register('business.address.state')} />
-            </div>
-          </>
-        }
+            <br />
 
-        <input type="submit" value="Create Business" />
-      </form>
-    </div>
+            <Heading size={5}>Address</Heading>
+
+            { !checked && (
+                <LocationAutocomplete addressCallback={addressCallback} />
+              )
+            }
+
+            <div className="is-pulled-right control">
+              <label className="checkbox" htmlFor="_useManualAddress">
+                <input className="checkbox mr-2" id="_useManualAddress" onChange={handleCheck} type="checkbox" />
+                Enter address manually?
+              </label>
+            </div>
+
+            { checked &&
+              <React.Fragment>
+                <div className="control">
+                  <label className="label" htmlFor="business.address.street">Street Address</label>
+                  <input
+                    className="input"
+                    type="text"
+                    id="street"
+                    {...register('business.address.street')}
+                  />
+                </div>
+
+                <div className="control">
+                  <label className="label" htmlFor="business.address.suburb">Suburb</label>
+                  <input
+                    className="input"
+                    type="text"
+                    id="suburb"
+                    {...register('business.address.suburb')}
+                  />
+                </div>
+
+                <div className="control">
+                  <label className="label" htmlFor="business.address.postcode">Postcode</label>
+                  <input
+                    className="input"
+                    type="text"
+                    id="postcode"
+                    {...register('business.address.postcode')}
+                  />
+                </div>
+
+                <div className="control">
+                  <label className="label" htmlFor="business.address.state">State</label>
+                  <input
+                    className="input"
+                    type="text"
+                    id="state"
+                    {...register('business.address.state')}
+                  />
+                </div>
+              </React.Fragment>
+            }
+
+            <br />
+
+            <Button submit color='primary'>Create Business</Button>
+          </form>
+        </Card.Content>
+      </Card>
+    </React.Fragment>
   )
 }
 

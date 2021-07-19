@@ -15,10 +15,18 @@ const Businesses = () => {
 
   return (
     <React.Fragment>
-      <Heading>Browse Businesses</Heading>
+      <Heading className="has-text-centered">Browse Businesses</Heading>
       <Columns>
         {businesses.map(business => (
-          <Columns.Column key={business.id}>
+          <Columns.Column
+            desktop={{
+              size: 'half'
+            }}
+            tablet={{
+              size: 'full'
+            }}
+            key={business.id}
+          >
             <BusinessCard key={business.id} business={business}></BusinessCard>
           </Columns.Column>
         ))}
