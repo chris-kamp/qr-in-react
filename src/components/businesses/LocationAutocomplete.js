@@ -2,29 +2,70 @@ import React, { useState } from "react";
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from "react-places-autocomplete";
 
 const LocationAutocomplete = (props) => {
-  const [address, setAddress] = useState(null)
+  const [address, setAddress] = useState('')
 
   const handleChange = address => {
-    console.debug(address)
     setAddress(address)
   }
 
   const handleSelect = address => {
-    console.debug(address)
     geocodeByAddress(address)
       .then(results => {
-        console.debug(results)
         setAddress(results[0].formatted_address)
-        props.setAddress(results[0])
-        return getLatLng(results[0])
-      })
-      .then(latLng => {
-        console.debug(latLng)
+        props.addressCallback(parseAddress(results[0].address_components))
       })
       .catch(error => {
         console.error(error)
       })
+  }
 
+  const parseAddress = (addressComponents) => {
+    let componentParse = {
+      street: ['street_number', 'street_address', 'route'],
+      suburb: [
+        'locality',
+        'sublocality',
+        'sublocality_level_1',
+        'sublocality_level_2',
+        'sublocality_level_3',
+        'sublocality_level_4',
+        'sublocality_level_5',
+      ],
+      postcode: ['postal_code'],
+      state: [
+        'political',
+        'administrative_area_level_1',
+        'administrative_area_level_2',
+        'administrative_area_level_3',
+        'administrative_area_level_4',
+        'administrative_area_level_5'
+      ]
+    }
+
+    let address = {
+      street: '',
+      suburb: '',
+      postcode: '',
+      state: ''
+    }
+
+    addressComponents.forEach(component => {
+      for (let parse in componentParse) {
+        if (componentParse[parse].indexOf(component.types[0]) !== -1) {
+          if (componentParse.street.includes(component.types[0])) {
+            address[parse] += `${component.long_name} `
+          } else if (componentParse.state.includes(component.types[0])) {
+            address[parse] = component.short_name
+          } else {
+            address[parse] = component.long_name
+          }
+        }
+      }
+    })
+
+    address.street = address.street.trim()
+
+    return address;
   }
 
   return (
@@ -33,6 +74,10 @@ const LocationAutocomplete = (props) => {
         value={address}
         onChange={handleChange}
         onSelect={handleSelect}
+        debounce={500}
+        highlightFirstSuggestion={true}
+        shouldFetchSuggestions={address.length > 5}
+        searchOptions={{componentRestrictions: { country: 'au' }}}
       >
         {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
           <div className="control">
@@ -44,7 +89,7 @@ const LocationAutocomplete = (props) => {
             <div>
               {loading && <p>Loading Suggestions...</p>}
               {suggestions.map(suggestion => (
-                  <div
+                  <div key={suggestion.id}
                     { ...getSuggestionItemProps(suggestion, {})}
                   >
                     <span>{suggestion.description}</span>

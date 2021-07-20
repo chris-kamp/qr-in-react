@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import BusinessCard from './BusinessCard';
-import { Heading, Columns } from 'react-bulma-components';
+import { Container, Heading, Columns } from 'react-bulma-components';
 
 const Businesses = () => {
   const [businesses, setBusinesses] = useState([]);
@@ -14,7 +14,7 @@ const Businesses = () => {
   }, []);
 
   return (
-    <React.Fragment>
+    <Container>
       <Heading className="has-text-centered">Browse Businesses</Heading>
       <Columns>
         {businesses.map(business => (
@@ -31,7 +31,7 @@ const Businesses = () => {
           </Columns.Column>
         ))}
       </Columns>
-    </React.Fragment>
+    </Container>
   )
 }
 

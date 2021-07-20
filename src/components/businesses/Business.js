@@ -33,7 +33,8 @@ const Business = () => {
                 </Heading>
                 <Heading size={6}>
                   {business.checkins.filter(checkin => {
-                    return (new Date(checkin.created_at) < new Date() - 7)
+                     // 604800000 milliseconds === 1 week
+                    return (new Date(checkin.created_at) > new Date() - 604800000)
                   }).length} checkins this week
                 </Heading>
               </Content>
