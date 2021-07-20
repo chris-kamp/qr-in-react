@@ -5,10 +5,11 @@ import { Heading, Container } from "react-bulma-components"
 import ButtonWide from "../shared/ButtonWide"
 import CheckinButton from "./CheckinButton"
 import { stateContext } from "../../stateReducer"
+import ReviewSection from "./ReviewSection"
 
 const Checkin = () => {
   const [business, setBusiness] = useState()
-  const [checkedIn, setCheckedIn] = useState()
+  const [checkinId, setCheckinId] = useState()
   const { id } = useParams()
   const history = useHistory()
   const { session } = useContext(stateContext)
@@ -28,7 +29,10 @@ const Checkin = () => {
 
   const submitCheckIn = () => {
     // TODO: If not logged in, should redirect to login (while setting "back" path)
-    if (!session) return
+    if (!session) {
+      history.push("/login")
+      return
+    }
     axios
       .post(
         `${process.env.REACT_APP_API_ENDPOINT}/checkins`,
@@ -42,7 +46,7 @@ const Checkin = () => {
           },
         }
       )
-      .then(setCheckedIn(true))
+      .then(response => setCheckinId(response.data.id))
       // TODO: Handle checkin error, including redirect to login (while setting "back" path) for unauthorised error
       .catch((err) => console.log(err))
   }
@@ -56,11 +60,9 @@ const Checkin = () => {
             <br />
             {business.name}
           </Heading>
-          <CheckinButton {...{ checkedIn, submitCheckIn }} />
-          {checkedIn && (
-            <>
-              <Heading className="is-size-4 mt-4">Leave a review?</Heading>
-            </>
+          <CheckinButton {...{ checkinId, submitCheckIn }} />
+          {checkinId && (
+            <ReviewSection {...{id, checkinId}} />
           )}
           <ButtonWide linkTo={`/businesses/${id}`} bgColor="info-dark">
             Back to Listing
