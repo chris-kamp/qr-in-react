@@ -4,7 +4,7 @@ import React from 'react';
 
 
 const BusinessCard = (props) => {
-  const starRating = props.business.reviews.reduce((a, b) => a + parseFloat(b.rating), 0) / props.business.reviews.length
+  const starRating = (props.business.reviews.reduce((a, b) => a + parseFloat(b.rating), 0) / props.business.reviews.length).toFixed(1)
   return (
     <React.Fragment>
       <Card>
@@ -24,7 +24,7 @@ const BusinessCard = (props) => {
           , {props.business.address.suburb.name}
           , {props.business.address.postcode.code}
           , {props.business.address.state.name}
-          <Link to={`/business/${props.business.id}`}>
+          <Link to={`/businesses/${props.business.id}`}>
             <Button className="is-pulled-right" size={'small'} color={'link'}>View</Button>
           </Link>
         </Card.Content>

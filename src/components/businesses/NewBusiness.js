@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useHistory } from "react-router";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { stateContext } from "../../stateReducer";
@@ -11,6 +12,8 @@ const NewBusiness = () => {
   const [useManualAddress, setUseManualAddress] = useState(false);
   const [categories, setCategories] = useState([])
 
+  const history = useHistory()
+
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_ENDPOINT}/categories`)
       .then(response => {
@@ -21,12 +24,12 @@ const NewBusiness = () => {
   const onSubmit = (data) => {
     data.business.user_id = context.session.user.id
 
-    console.debug(data)
-
     axios
       .post(`${process.env.REACT_APP_API_ENDPOINT}/businesses`, data)
       .then((response) => {
         console.debug(response.data)
+
+        history.push(`/businesses/${response.data.id}`)
       })
       .catch((error) => {
         console.log(error)
@@ -48,7 +51,7 @@ const NewBusiness = () => {
 
           <div className="control">
             <label className="label" htmlFor="business.description">Description</label>
-            <input className="input" type="text" id="description" {...register('business.description')} />
+            <textarea className="input" type="text" id="description" {...register('business.description')}></textarea>
           </div>
 
           <div className="control">

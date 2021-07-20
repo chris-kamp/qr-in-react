@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import BusinessCard from './BusinessCard';
+import BusinessSearchFilter from './BusinessSearchFilter';
 import { Container, Heading, Columns } from 'react-bulma-components';
 
 const Businesses = () => {
@@ -16,6 +17,7 @@ const Businesses = () => {
   return (
     <Container>
       <Heading className="has-text-centered">Browse Businesses</Heading>
+      <BusinessSearchFilter />
       <Columns>
         {businesses.map(business => (
           <Columns.Column
