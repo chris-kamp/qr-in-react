@@ -6,11 +6,14 @@ import { stateContext } from "../../stateReducer"
 import axios from "axios"
 import { reviewContentValidator } from "../../utils/Validators"
 import { ErrorText } from "../../styled-components/FormStyledComponents"
+import TextArea from "../shared/TextArea"
+import { Rating } from "@material-ui/lab"
 
 const ReviewSection = ({ id, checkinId }) => {
   const [submissionFailureMessage, setSubmissionFailureMessage] = useState()
+  const [rating, setRating] = useState(0)
   const history = useHistory()
-  const { session, dispatch } = useContext(stateContext)
+  const { session } = useContext(stateContext)
   // react-hook-form setup
   const {
     register,
@@ -27,9 +30,13 @@ const ReviewSection = ({ id, checkinId }) => {
     }
     // Post form data to login route
     axios
-      .post(`${process.env.REACT_APP_API_ENDPOINT}/reviews`, {...data, checkin_id: checkinId}, {
-        headers: { Authorization: `Bearer ${session.token}` },
-      })
+      .post(
+        `${process.env.REACT_APP_API_ENDPOINT}/reviews`,
+        { ...data, checkin_id: checkinId },
+        {
+          headers: { Authorization: `Bearer ${session.token}` },
+        }
+      )
       .then(() => {
         // TODO: Display review posting success message
         // Remove failure message on successful submission
@@ -38,8 +45,9 @@ const ReviewSection = ({ id, checkinId }) => {
         history.push(`/businesses/${id}`)
       })
       .catch((error) => {
-        // TODO: Handle specific errors
-        // Display error messages - handles unauthorized, or other uncategorised error
+        // TODO: Handle specific errors, including redirect to login (while setting "back" path) for unauthorised error
+        // Display error messages - handles general errors not otherwise dealt with
+
         setSubmissionFailureMessage(
           "Something went wrong. Please try again shortly."
         )
@@ -49,19 +57,27 @@ const ReviewSection = ({ id, checkinId }) => {
   return (
     <>
       <Heading className="is-size-4 mt-4">Leave a review?</Heading>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <input type="radio" id="rating-1" value={1} {...register("rating")} />
-          <input type="radio" id="rating-2" value={2} {...register("rating")} />
-          <input type="radio" id="rating-3" value={3} {...register("rating")} />
-          <input type="radio" id="rating-4" value={4} {...register("rating")} />
-          <input type="radio" id="rating-5" value={5} {...register("rating")} />
+      <form onSubmit={handleSubmit(onSubmit)} style={{ width: "80%" }}>
+        <div style={{ width: "100%" }}>
+          {
+            <Rating
+              {...register("rating", { required: true })}
+              value={rating}
+              onChange={(event, newValue) => {
+                setRating(newValue)
+              }}
+            />
+          }
+          {errors.rating && <ErrorText>Rating is required</ErrorText>}
         </div>
-        <div>
-          <textarea
-            id="content"
-            {...register("content", reviewContentValidator)}
-            placeholder="Comments (optional)"
+        <div style={{ width: "100%" }}>
+          <TextArea
+            {...{
+              register,
+              name: "content",
+              validator: reviewContentValidator,
+              placeholder: "Comments (optional)",
+            }}
           />
           {errors.content && (
             <ErrorText>Comment must not exceed 200 characters</ErrorText>
@@ -72,7 +88,12 @@ const ReviewSection = ({ id, checkinId }) => {
             Failed to post review: {submissionFailureMessage}
           </ErrorText>
         )}
-        <input type="submit" />
+        <input
+          type="submit"
+          className="button has-background-primary-dark has-text-white has-text-weight-bold mt-2 is-pulled-right"
+          value="Post"
+          style={{ borderRadius: "0.6rem" }}
+        />
       </form>
     </>
   )

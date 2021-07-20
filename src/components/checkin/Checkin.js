@@ -6,10 +6,12 @@ import ButtonWide from "../shared/ButtonWide"
 import CheckinButton from "./CheckinButton"
 import { stateContext } from "../../stateReducer"
 import ReviewSection from "./ReviewSection"
+import { ErrorText } from "../../styled-components/FormStyledComponents"
 
 const Checkin = () => {
   const [business, setBusiness] = useState()
   const [checkinId, setCheckinId] = useState()
+  const [checkinFailureMessage, setCheckinFailureMessage] = useState()
   const { id } = useParams()
   const history = useHistory()
   const { session } = useContext(stateContext)
@@ -46,9 +48,18 @@ const Checkin = () => {
           },
         }
       )
-      .then(response => setCheckinId(response.data.id))
-      // TODO: Handle checkin error, including redirect to login (while setting "back" path) for unauthorised error
-      .catch((err) => console.log(err))
+      .then((response) => {
+        setCheckinId(response.data.id)
+        // Remove failure message on successful checkin
+        setCheckinFailureMessage(null)
+      })
+      .catch((err) => {
+        // TODO: Handle specific errors, including redirect to login (while setting "back" path) for unauthorised error
+        // Display error messages - handles general errors not otherwise dealt with
+        setCheckinFailureMessage(
+          "Something went wrong. Please try again shortly."
+        )
+      })
   }
 
   return (
@@ -61,10 +72,13 @@ const Checkin = () => {
             {business.name}
           </Heading>
           <CheckinButton {...{ checkinId, submitCheckIn }} />
-          {checkinId && (
-            <ReviewSection {...{id, checkinId}} />
+          {checkinFailureMessage && (
+            <ErrorText>
+              Checkin failed: {checkinFailureMessage}
+            </ErrorText>
           )}
-          <ButtonWide linkTo={`/businesses/${id}`} bgColor="info-dark">
+          {checkinId && <ReviewSection {...{ id, checkinId }} />}
+          <ButtonWide linkTo={`/businesses/${id}`} bgColor="info-dark" addClasses="mt-4">
             Back to Listing
           </ButtonWide>
         </Container>

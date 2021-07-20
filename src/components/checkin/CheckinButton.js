@@ -1,12 +1,12 @@
 import ButtonWide from "../shared/ButtonWide"
 
-const CheckinButton = ({ checkedIn, submitCheckIn }) => {
+const CheckinButton = ({ checkinId, submitCheckIn, addClasses }) => {
   return (
     <>
-      {checkedIn ? (
-        <ButtonWide bgColor="primary" disabled>Checked In!</ButtonWide>
+      {checkinId ? (
+        <ButtonWide bgColor="primary" disabled {...{addClasses}}>Checked In!</ButtonWide>
       ) : (
-        <ButtonWide bgColor="primary-dark" handleClick={submitCheckIn}>
+        <ButtonWide bgColor="primary-dark" handleClick={submitCheckIn} {...{addClasses}}>
           Check In
         </ButtonWide>
       )}
