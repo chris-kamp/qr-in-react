@@ -7,11 +7,6 @@ const Home = () => {
   return (
     <div>
       <h1>Home</h1>
-      <p>
-        {session?.user
-          ? `Logged in as ${session.user.username}`
-          : "Not logged in"}
-      </p>
     </div>
   )
 }

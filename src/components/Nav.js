@@ -31,7 +31,14 @@ const Nav = () => {
             Browse
           </Navbar.Item>
         </Navbar.Container>
-        <Navbar.Container className={`is-flex`} position="end" align="end">
+        <Navbar.Container align="end" className="is-flex">
+          {session && (
+            <Navbar.Item className="has-text-weight-bold" renderAs="span">
+              {session.user.username}
+            </Navbar.Item>
+          )}
+        </Navbar.Container>
+        <Navbar.Container className="is-flex" align="end">
           {!session && (
             <>
               <Navbar.Item
@@ -53,18 +60,13 @@ const Nav = () => {
             </>
           )}
           {session && (
-            <>
-              <Navbar.Item className="has-text-weight-bold">
-                {session.user.username}
-              </Navbar.Item>
-              <Navbar.Item
-                renderAs={Button}
-                className="button has-background-dark has-text-white my-auto mx-2"
-                onClick={logOut}
-              >
-                Log Out
-              </Navbar.Item>
-            </>
+            <Navbar.Item
+              renderAs={Button}
+              className="button has-background-dark has-text-white my-auto mx-2"
+              onClick={logOut}
+            >
+              Log Out
+            </Navbar.Item>
           )}
         </Navbar.Container>
       </Navbar.Menu>

@@ -28,13 +28,13 @@ function App() {
           <Route exact path="/businesses">
             <Businesses />
           </Route>
-          <Route exact path="/business/new">
+          <Route exact path="/businesses/new">
             <NewBusiness />
           </Route>
-          <Route exact path="/business/:id">
+          <Route exact path="/businesses/:id">
             <Business />
           </Route>
-          <Route exact path="/business/:id/checkin">
+          <Route exact path="/businesses/:id/checkin">
             <Checkin />
           </Route>
           <Route exact path="/users/:id">
