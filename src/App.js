@@ -11,16 +11,19 @@ import Register from "./components/Register"
 import stateReducer, { stateContext } from "./stateReducer"
 import "bulma/css/bulma.min.css"
 import Nav from "./components/Nav"
+import Alerts from "./components/alerts/Alerts"
 
 function App() {
   const [store, dispatch] = useReducer(stateReducer, {
     session: JSON.parse(localStorage.getItem("session")),
+    alerts: []
   })
 
   return (
     <stateContext.Provider value={{ ...store, dispatch }}>
       <Router>
         <Nav />
+        <Alerts />
         <Switch>
           <Route exact path="/">
             <Home />
