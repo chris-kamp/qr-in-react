@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Heading, Content, Columns, Image, Card, Table, Tag } from 'react-bulma-components';
+import { Rating } from "@material-ui/lab"
 
 const Business = () => {
   const [business, setBusiness] = useState(false);
@@ -52,24 +53,29 @@ const Business = () => {
             <Card>
               <Card.Header.Title>Recent Check-ins</Card.Header.Title>
               <Card.Content>
+                <Table className="is-fullwidth">
                   {business.checkins.map(checkin => (
-                    <Table>
+                    <tr>
                       <td>
-                        <Image rounded src="https://placekitten.com/50/50"></Image>
+                        <Image size={64} rounded src="https://placekitten.com/64/64"></Image>
                       </td>
                       <td>
-                        <p>
                           <span className="has-text-grey">{new Date(checkin.created_at).toLocaleString()}</span>
+                          {checkin.review?.rating && (
+                            <span className="is-pulled-right">
+                              <Rating size='small' value={checkin.review?.rating} disabled />
+                            </span>
+                          )}
                           <br />
                           <b>{checkin.user.username}</b> checked in at <b>{business.name}</b>
-                          {checkin.review.content && (
+                          {checkin.review?.content && (
                             <span> and left a review: "<i>{checkin.review.content}</i>"</span>
                           )}
-                        </p>
                       </td>
-                    </Table>
-                  ))
-                }
+                    </tr>
+                    )
+                  )}
+                </Table>
               </Card.Content>
             </Card>
           ) : (

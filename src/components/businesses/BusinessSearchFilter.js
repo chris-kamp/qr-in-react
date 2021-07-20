@@ -6,23 +6,28 @@ import { Card, Heading, Button } from "react-bulma-components"
 
 const BusinessSearchFilter = () => {
   const [categories, setCategories] = useState([])
+  const {register, handleSubmit, setValue, formState: { errors }} = useForm();
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_ENDPOINT}/categories`)
       .then(response => {
         setCategories(response.data);
       })
-  }, []);
+  }, [])
+
+  const onSubmit = (data) => {
+    console.debug(data)
+  };
 
   return (
     <Card className="my-5">
       <Card.Header.Title>Search Businesses</Card.Header.Title>
       <Card.Content>
 
-        <form action="">
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="field has-addons">
             <div className="control is-expanded">
-              <input type="text" name="" id="" className="input" placeholder="Type a business name or location" />
+              <input {...register('search')} type="text" id="search" className="input" placeholder="Type a business name or location" />
             </div>
             <div className="control">
               <Button color='primary'>Search</Button>
@@ -33,7 +38,7 @@ const BusinessSearchFilter = () => {
             <span className='has-text-grey'>Filter By Type:</span>
             {categories.map(category => (
               <label className="checkbox mx-1">
-                <input type="checkbox" className="checkbox mx-1" />
+                <input {...register(`filter.${category.name}`)} type="checkbox" className="checkbox mx-1" />
                 {category.name}
               </label>
             ))}
