@@ -1,12 +1,15 @@
 import { useState, useContext } from "react"
 import { useForm } from "react-hook-form"
 import axios from "axios"
-import { Link, useHistory } from "react-router-dom"
+import { useHistory } from "react-router-dom"
 import { ErrorText } from "../styled-components/FormStyledComponents"
-import { passwordValidator, emailValidator } from "../utils/Validators"
+import { loginPasswordValidator, emailValidator } from "../utils/Validators"
 import { stateContext } from "../stateReducer"
-import { Heading } from "react-bulma-components"
 import FormContainer from "./shared/FormContainer"
+import Input from "./shared/Input"
+import InputLabel from "./shared/InputLabel"
+import FormButtonGroup from "./shared/FormButtonGroup"
+import PageHeading from "./shared/PageHeading"
 
 const loginFailureMessages = {
   unauthorised: "Username or password incorrect",
@@ -51,46 +54,32 @@ const Login = () => {
 
   return (
     <FormContainer>
-      <Heading className="has-text-centered mt-5">Login</Heading>
+      <PageHeading>Login</PageHeading>
       <form onSubmit={handleSubmit(onSubmit)} id="loginForm" />
-      <label htmlFor="email" className="has-text-weight-bold is-size-5">
-        Email
-      </label>
-      <input
-        className="input is-medium has-background-grey-lighter"
-        style={{ borderRadius: "1rem", width: "50%", minWidth: "20rem" }}
-        type="text"
-        id="email"
+      <InputLabel htmlFor="email" text="Email" isFirst />
+      <Input
+        register={register}
+        name="email"
+        validator={emailValidator}
+        placeholder="email@example.com"
         form="loginForm"
-        {...register("email", emailValidator)}
-        autoFocus
+        focus
       />
       {errors.email && <ErrorText>Invalid email address</ErrorText>}
-      <label htmlFor="password" className="has-text-weight-bold is-size-5 mt-3">
-        Password
-      </label>
-      <input
-        className="input is-medium has-background-grey-lighter"
-        style={{ borderRadius: "1rem", width: "50%", minWidth: "20rem" }}
+      <InputLabel htmlFor="password" text="Password" />
+      <Input
         type="password"
-        id="password"
+        name="password"
         form="loginForm"
-        {...register("password", passwordValidator)}
+        register={register}
+        validator={loginPasswordValidator}
+        placeholder="Password"
       />
       {errors.password && <ErrorText>Invalid password</ErrorText>}
       {loginFailureMessage && (
         <ErrorText>Login failed: {loginFailureMessage}</ErrorText>
       )}
-      <div className="mt-4">
-        <Link to="/" className="button has-background-danger has-text-white has-text-weight-bold mx-1" style={{ borderRadius: "0.6rem" }}>Cancel</Link>
-        <input
-          type="submit"
-          form="loginForm"
-          className="button has-background-primary-dark has-text-white has-text-weight-bold mx-1"
-          style={{ borderRadius: "0.6rem" }}
-          value="Login"
-        />
-      </div>
+      <FormButtonGroup form="loginForm" submitValue="Login" />
     </FormContainer>
   )
 }
