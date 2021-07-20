@@ -1,24 +1,29 @@
-import React, { useReducer, useEffect } from "react"
+import React, { useReducer } from "react"
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom"
-import Home from './components/Home';
-import Businesses from './components/businesses/Businesses';
-import Business from './components/businesses/Business';
-import NewBusiness from './components/businesses/NewBusiness';
-import Checkin from './components/Checkin';
-import Login from './components/Login';
-import Profile from './components/Profile';
-import Register from './components/Register';
+import Home from "./components/Home"
+import Businesses from "./components/businesses/Businesses"
+import Business from "./components/businesses/Business"
+import NewBusiness from "./components/businesses/NewBusiness"
+import Checkin from "./components/checkin/Checkin"
+import Login from "./components/Login"
+import Profile from "./components/Profile"
+import Register from "./components/Register"
 import stateReducer, { stateContext } from "./stateReducer"
-import 'bulma/css/bulma.min.css'
+import "bulma/css/bulma.min.css"
+import Nav from "./components/Nav"
+import Alerts from "./components/alerts/Alerts"
 
 function App() {
   const [store, dispatch] = useReducer(stateReducer, {
     session: JSON.parse(localStorage.getItem("session")),
+    alerts: []
   })
 
   return (
     <stateContext.Provider value={{ ...store, dispatch }}>
       <Router>
+        <Nav />
+        <Alerts />
         <Switch>
           <Route exact path="/">
             <Home />
@@ -26,13 +31,13 @@ function App() {
           <Route exact path="/businesses">
             <Businesses />
           </Route>
-          <Route exact path="/business/new">
+          <Route exact path="/businesses/new">
             <NewBusiness />
           </Route>
-          <Route exact path="/business/:id">
+          <Route exact path="/businesses/:id">
             <Business />
           </Route>
-          <Route exact path="/business/:id/checkin">
+          <Route exact path="/businesses/:id/checkin">
             <Checkin />
           </Route>
           <Route exact path="/users/:id">

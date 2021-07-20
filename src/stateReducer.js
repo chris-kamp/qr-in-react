@@ -1,4 +1,5 @@
 import { createContext } from "react"
+import { v4 as uuid } from "uuid"
 
 export default function stateReducer(currentState, action) {
   switch (action.type) {
@@ -15,6 +16,29 @@ export default function stateReducer(currentState, action) {
       return {
         ...currentState,
         session: null,
+      }
+    }
+
+    case "pushAlert": {
+      return {
+        ...currentState,
+        alerts: [
+          ...currentState.alerts,
+          {
+            message: action.alert.message,
+            type: action.alert.type,
+            id: uuid(),
+          },
+        ],
+      }
+    }
+
+    case "removeAlert": {
+      return {
+        ...currentState,
+        alerts: currentState.alerts.filter(
+          (element) => element.id !== action.id
+        ),
       }
     }
 

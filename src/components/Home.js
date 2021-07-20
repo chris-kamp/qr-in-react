@@ -1,22 +1,12 @@
 import { stateContext } from "../stateReducer"
-import { useContext, useState } from "react"
+import { useContext } from "react"
 
 const Home = () => {
-  const { session, dispatch } = useContext(stateContext)
-  const logOut = () => {
-    dispatch({
-      type: "logout",
-    })
-  }
+  const { session } = useContext(stateContext)
+
   return (
     <div>
       <h1>Home</h1>
-      <p>
-        {session?.user
-          ? `Logged in as ${session.user.username}`
-          : "Not logged in"}
-      </p>
-      <button onClick={logOut}>Log Out</button>
     </div>
   )
 }
