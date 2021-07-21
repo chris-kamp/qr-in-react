@@ -8,12 +8,13 @@ import { reviewContentValidator } from "../../utils/Validators"
 import { ErrorText } from "../../styled-components/FormStyledComponents"
 import TextArea from "../shared/TextArea"
 import { Rating } from "@material-ui/lab"
+import { enforceLogin } from "../../utils/Utils"
 
-const ReviewSection = ({ id, checkinId }) => {
+const ReviewSection = ({ id, checkinId, business }) => {
   const [submissionFailureMessage, setSubmissionFailureMessage] = useState()
   const [rating, setRating] = useState(0)
   const history = useHistory()
-  const { session } = useContext(stateContext)
+  const { session, dispatch } = useContext(stateContext)
   // react-hook-form setup
   const {
     register,
@@ -23,11 +24,16 @@ const ReviewSection = ({ id, checkinId }) => {
 
   // Handle review form submission
   const onSubmit = (data) => {
-    // TODO: If not logged in, should redirect to login (while setting "back" path)
-    if (!session) {
-      history.push("/login")
+    // If not logged in, redirect to login page with flash error message, then return to prevent further action
+    if (
+      enforceLogin(
+        "You must be logged in in order to leave a review",
+        session,
+        dispatch,
+        history
+      )
+    )
       return
-    }
     // Post form data to login route
     axios
       .post(
@@ -38,19 +44,36 @@ const ReviewSection = ({ id, checkinId }) => {
         }
       )
       .then(() => {
-        // TODO: Display review posting success message
         // Remove failure message on successful submission
         setSubmissionFailureMessage(null)
         // Redirect to business listing
         history.push(`/businesses/${id}`)
+        dispatch({
+          type: "pushAlert",
+          alert: {
+            type: "notice",
+            message: `Your review of ${business.name} has been posted!`,
+          },
+        })
       })
       .catch((error) => {
-        // TODO: Handle specific errors, including redirect to login (while setting "back" path) for unauthorised error
-        // Display error messages - handles general errors not otherwise dealt with
-
-        setSubmissionFailureMessage(
-          "Something went wrong. Please try again shortly."
-        )
+        // If unauthorised, redirect user to login page
+        // TODO: Handle case where user might be logged in but unauthorised
+        if (error.response?.status === 401) {
+          history.push("/login")
+          dispatch({
+            type: "pushAlert",
+            alert: {
+              type: "error",
+              message: "You must be logged in to leave a review"
+            }
+          })
+          // Display error messages - handles general errors not otherwise dealt with
+        } else {
+          setSubmissionFailureMessage(
+            "Something went wrong. Please try again shortly."
+          )
+        }
       })
   }
 
