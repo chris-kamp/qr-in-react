@@ -18,7 +18,6 @@ const EditBusiness = () => {
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
       .then((response) => {
-        console.debug(response.data)
         setValue('business', {...response.data, address: {
           street: response.data.address.street,
           suburb: response.data.address.suburb.name,
@@ -42,7 +41,6 @@ const EditBusiness = () => {
     axios
       .patch(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`, data)
       .then((response) => {
-
         dispatch({
           type: 'pushAlert',
           alert: {
@@ -54,7 +52,13 @@ const EditBusiness = () => {
         history.push(`/businesses/${response.data.id}`)
       })
       .catch((error) => {
-        console.log(error)
+        dispatch({
+          type: 'pushAlert',
+          alert: {
+            message: 'Errors: ' + Object.keys(error.response.data.errors).map(k => `${k}: ${error.response.data.errors[k].join(', ')}`).join(', '),
+            type: 'error'
+          }
+        })
       })
   }
 
@@ -69,11 +73,13 @@ const EditBusiness = () => {
           <div className="control">
             <label className="label" htmlFor="business.name">Name</label>
             <input className="input" type="text" id="name" {...register('business.name')} />
+            {errors.business?.name && 'Name is required'}
           </div>
 
           <div className="control">
             <label className="label" htmlFor="business.description">Description</label>
             <textarea className="input" type="text" id="description" {...register('business.description')}></textarea>
+            {errors.business?.description && 'Description is required'}
           </div>
 
           <div className="control">

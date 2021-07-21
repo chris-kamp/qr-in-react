@@ -9,7 +9,7 @@ import LocationAutocomplete from "./LocationAutocomplete";
 const NewBusiness = () => {
   const context = useContext(stateContext);
   const { dispatch } = useContext(stateContext);
-  const {register, handleSubmit, setValue, formState: { errors }} = useForm();
+  const {register, handleSubmit, setValue, setError, formState: { errors }} = useForm();
   const [useManualAddress, setUseManualAddress] = useState(false);
   const [categories, setCategories] = useState([])
 
@@ -25,13 +25,9 @@ const NewBusiness = () => {
   const onSubmit = (data) => {
     data.business.user_id = context.session.user.id
 
-    console.debug(data)
-
     axios
       .post(`${process.env.REACT_APP_API_ENDPOINT}/businesses`, data)
       .then((response) => {
-        console.debug(response.data)
-
         dispatch({
           type: 'pushAlert',
           alert: {
@@ -43,7 +39,13 @@ const NewBusiness = () => {
         history.push(`/businesses/${response.data.id}`)
       })
       .catch((error) => {
-        console.log(error)
+        dispatch({
+          type: 'pushAlert',
+          alert: {
+            message: 'Errors: ' + Object.keys(error.response.data.errors).map(k => `${k}: ${error.response.data.errors[k].join(', ')}`).join(', '),
+            type: 'error'
+          }
+        })
       })
   }
 
@@ -57,12 +59,14 @@ const NewBusiness = () => {
 
           <div className="control">
             <label className="label" htmlFor="business.name">Name</label>
-            <input className="input" type="text" id="name" {...register('business.name')} />
+            <input className="input" type="text" id="name" {...register('business.name', { required: true }) } />
+            {errors.business?.name && 'Name is required'}
           </div>
 
           <div className="control">
             <label className="label" htmlFor="business.description">Description</label>
-            <textarea className="input" type="text" id="description" {...register('business.description')}></textarea>
+            <textarea className="input" type="text" id="description" {...register('business.description', { required: true })}></textarea>
+            {errors.business?.description && 'Description is required'}
           </div>
 
           <div className="control">
