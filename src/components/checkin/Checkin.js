@@ -10,6 +10,7 @@ import { ErrorText } from "../../styled-components/FormStyledComponents"
 import FormContainer from "../shared/FormContainer"
 import { enforceLogin } from "../../utils/Utils"
 
+
 const Checkin = () => {
   const [business, setBusiness] = useState()
   const [checkinId, setCheckinId] = useState()
@@ -123,5 +124,5 @@ const Checkin = () => {
     </>
   )
 }
-
+if (
 export default Checkin
