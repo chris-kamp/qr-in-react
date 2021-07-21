@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Link, useParams, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Heading, Content, Columns, Image, Card, Table, Tag } from 'react-bulma-components';
+import QRCode from 'qrcode.react'
 import { Rating } from "@material-ui/lab"
 import { Button } from 'react-bulma-components';
 import { stateContext } from "../../stateReducer";
@@ -12,6 +13,7 @@ const Business = () => {
   const [business, setBusiness] = useState(false);
   const { id } = useParams();
   const history = useHistory()
+  const isOwnBusiness = business.user_id == context.session?.user.id
 
   const deleteBusiness = () => {
     axios.delete(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
@@ -34,8 +36,6 @@ const Business = () => {
         setBusiness(response.data);
       });
   }, []);
-
-  const isOwnBusiness = business.user_id == context.session.user.id
 
   return (
     <Container>
@@ -78,19 +78,25 @@ const Business = () => {
                 </Link>
               </Content>
             </Columns.Column>
-            <Columns.Column size='full' className='has-text-centered'>
-              <Link to={`/promotions/`}>
-                <Button className='mx-5' color='success'>New Promotion</Button>
-              </Link>
-              <Link to={`/businesses/${id}/edit`}>
-                <Button className='mx-5' color='warning'>Edit Listing</Button>
-              </Link>
-              <Button onClick={() => {
-                if (window.confirm('Are you sure you want to delete this business?')) {
-                  deleteBusiness()
-                }
-              }} className='mx-5' color='danger'>Delete Listing</Button>
-            </Columns.Column>
+            {isOwnBusiness && (
+              <Columns.Column size='full' className='has-text-centered'>
+                <QRCode
+                  value={`${process.env.REACT_APP_SITE_URL}/businesses/${id}/checkin`}
+                  level={'L'}
+                />
+                <Link to={`/promotions/`}>
+                  <Button className='mx-5' color='success'>New Promotion</Button>
+                </Link>
+                <Link to={`/businesses/${id}/edit`}>
+                  <Button className='mx-5' color='warning'>Edit Listing</Button>
+                </Link>
+                <Button onClick={() => {
+                  if (window.confirm('Are you sure you want to delete this business?')) {
+                    deleteBusiness()
+                  }
+                }} className='mx-5' color='danger'>Delete Listing</Button>
+              </Columns.Column>
+            )}
           </Columns>
           {business.checkins.length > 0 ? (
             <Card>
