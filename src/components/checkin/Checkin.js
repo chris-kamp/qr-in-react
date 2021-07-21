@@ -124,5 +124,4 @@ const Checkin = () => {
     </>
   )
 }
-if (
 export default Checkin
