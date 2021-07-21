@@ -1,12 +1,13 @@
 import { useEffect, useState, useContext } from "react"
 import axios from "axios"
 import { useParams, useHistory } from "react-router-dom"
-import { Heading, Container } from "react-bulma-components"
+import { Heading } from "react-bulma-components"
 import ButtonWide from "../shared/ButtonWide"
 import CheckinButton from "./CheckinButton"
 import { stateContext } from "../../stateReducer"
 import ReviewSection from "./ReviewSection"
 import { ErrorText } from "../../styled-components/FormStyledComponents"
+import FormContainer from "../shared/FormContainer"
 
 const Checkin = () => {
   const [business, setBusiness] = useState()
@@ -14,7 +15,7 @@ const Checkin = () => {
   const [checkinFailureMessage, setCheckinFailureMessage] = useState()
   const { id } = useParams()
   const history = useHistory()
-  const { session } = useContext(stateContext)
+  const { session, dispatch } = useContext(stateContext)
   useEffect(() => {
     // TODO: Catch error and redirect to homepage (with flash error?)
     axios
@@ -32,6 +33,13 @@ const Checkin = () => {
   const submitCheckIn = () => {
     // TODO: If not logged in, should redirect to login (while setting "back" path)
     if (!session) {
+      dispatch({
+        type: "pushAlert",
+        alert: {
+          message: "You must be logged in in order to check in",
+          type: "error"
+        }
+      })
       history.push("/login")
       return
     }
@@ -65,8 +73,8 @@ const Checkin = () => {
   return (
     <>
       {business && (
-        <Container className="is-flex is-flex-direction-column is-align-items-center">
-          <Heading className="has-text-centered">
+        <FormContainer>
+          <Heading className="has-text-centered mt-5">
             Check in at
             <br />
             {business.name}
@@ -81,7 +89,7 @@ const Checkin = () => {
           <ButtonWide linkTo={`/businesses/${id}`} bgColor="info-dark" addClasses="mt-4">
             Back to Listing
           </ButtonWide>
-        </Container>
+        </FormContainer>
       )}
     </>
   )

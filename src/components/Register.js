@@ -2,7 +2,6 @@ import { useState, useContext } from "react"
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import { useHistory } from "react-router-dom"
-import { PageHeader } from "../styled-components/GeneralStyledComponents"
 import { ErrorText } from "../styled-components/FormStyledComponents"
 import {
   usernameValidator,
@@ -10,6 +9,11 @@ import {
   emailValidator,
 } from "../utils/Validators"
 import { stateContext } from "../stateReducer"
+import InputLabel from "./shared/InputLabel"
+import Input from "./shared/Input"
+import FormButtonGroup from "./shared/FormButtonGroup"
+import PageHeading from "./shared/PageHeading"
+import FormContainer from "./shared/FormContainer"
 
 const Register = () => {
   const [signupFailureMessage, setSignupFailureMessage] = useState()
@@ -46,43 +50,46 @@ const Register = () => {
   }
 
   return (
-    <>
-      <PageHeader>Register</PageHeader>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            type="text"
-            id="email"
-            {...register("email", emailValidator)}
-            autoFocus
-          />
-          {errors.email && <ErrorText>Invalid email address</ErrorText>}
-        </div>
-        <div>
-          <label htmlFor="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            {...register("username", usernameValidator)}
-          />
-          {errors.username && <ErrorText>Invalid username</ErrorText>}
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            {...register("password", passwordValidator)}
-          />
-          {errors.password && <ErrorText>Invalid password</ErrorText>}
-        </div>
+    <FormContainer>
+      <PageHeading>Register</PageHeading>
+      <form onSubmit={handleSubmit(onSubmit)} id="registerForm" />
+      <InputLabel htmlFor="email" text="Email" isFirst />
+      <Input
+        register={register}
+        name="email"
+        validator={emailValidator}
+        placeholder="email@example.com"
+        form="registerForm"
+        focus
+      />
+      {errors.email && <ErrorText>Invalid email address</ErrorText>}
+
+      <InputLabel htmlFor="username" text="Username" />
+      <Input
+        register={register}
+        name="username"
+        validator={usernameValidator}
+        placeholder="Username"
+        form="registerForm"
+      />
+      {errors.username && <ErrorText>Invalid username</ErrorText>}
+
+      <InputLabel htmlFor="password" text="Password" />
+      <Input
+        type="password"
+        name="password"
+        form="registerForm"
+        register={register}
+        validator={passwordValidator}
+        placeholder="Password"
+      />
+      {errors.password && <ErrorText>Invalid password</ErrorText>}
+
         {signupFailureMessage && (
-          <ErrorText>Login failed: {signupFailureMessage}</ErrorText>
+          <ErrorText>Signup failed: {signupFailureMessage}</ErrorText>
         )}
-        <input type="submit" />
-      </form>
-    </>
+        <FormButtonGroup form="registerForm" submitValue="Sign up" />
+    </FormContainer>
   )
 }
 
