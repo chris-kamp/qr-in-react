@@ -1,4 +1,4 @@
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import { useHistory } from "react-router-dom"
@@ -10,6 +10,7 @@ import Input from "./shared/Input"
 import InputLabel from "./shared/InputLabel"
 import FormButtonGroup from "./shared/FormButtonGroup"
 import PageHeading from "./shared/PageHeading"
+import { goBack } from "../utils/Utils"
 
 const loginFailureMessages = {
   unauthorised: "Username or password incorrect",
@@ -18,7 +19,7 @@ const loginFailureMessages = {
 
 const Login = () => {
   const [loginFailureMessage, setLoginFailureMessage] = useState()
-  const { dispatch } = useContext(stateContext)
+  const { dispatch, backPath, session } = useContext(stateContext)
 
   const history = useHistory()
   // react-hook-form setup
@@ -27,6 +28,20 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm()
+
+  // Redirect back to previous page if user is already logged in
+  useEffect(() => {
+    // Do nothing if user not logged in
+    if (!session) return
+    dispatch({
+      type: "pushAlert",
+      alert: {
+        type: "error",
+        message: "You are already logged in",
+      },
+    })
+    goBack(backPath, history)
+  })
 
   // Handle login form submission
   const onSubmit = (data) => {
@@ -39,10 +54,18 @@ const Login = () => {
           type: "login",
           session: { token: response.data.token, user: response.data.user },
         })
+        // Flash alert for succcessful login
+        dispatch({
+          type: "pushAlert",
+          alert: {
+            type: "notice",
+            message: `You are now logged in as ${response.data.user.username}`,
+          },
+        })
         // Remove login failure message on successful login
         setLoginFailureMessage(null)
-        // Redirect to home
-        history.push("/")
+        // Redirect back to last page (or home if none)
+        goBack(backPath, history)
       })
       .catch((error) => {
         // Display error messages - handles unauthorized, or other uncategorised error

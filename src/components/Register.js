@@ -1,4 +1,4 @@
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import { useHistory } from "react-router-dom"
@@ -14,17 +14,31 @@ import Input from "./shared/Input"
 import FormButtonGroup from "./shared/FormButtonGroup"
 import PageHeading from "./shared/PageHeading"
 import FormContainer from "./shared/FormContainer"
+import { goBack } from "../utils/Utils"
 
 const Register = () => {
   const [signupFailureMessage, setSignupFailureMessage] = useState()
   const history = useHistory()
-  const { dispatch } = useContext(stateContext)
+  const { dispatch, backPath, session } = useContext(stateContext)
   // react-hook-form setup
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm()
+  // Redirect back to previous page if user is already logged in
+  useEffect(() => {
+    // Do nothing if user not logged in
+    if (!session) return
+    dispatch({
+      type: "pushAlert",
+      alert: {
+        type: "error",
+        message: "You are already logged in",
+      },
+    })
+    goBack(backPath, history)
+  })
 
   // Handle login form submission
   const onSubmit = (data) => {
@@ -37,10 +51,18 @@ const Register = () => {
           type: "login",
           session: { token: response.data.token, user: response.data.user },
         })
+        // Flash alert for succcessful signup
+        dispatch({
+          type: "pushAlert",
+          alert: {
+            type: "notice",
+            message: `Signup successful! You are now logged in as ${response.data.user.username}`,
+          },
+        })
         // Remove signup failure message on successful signup
         setSignupFailureMessage(null)
-        // Redirect to home
-        history.push("/")
+        // Redirect to last visited page, or to home if no previous page set (eg. came from external site)
+        backPath ? history.push(backPath) : history.push("/")
       })
       .catch((error) => {
         // Display error messages - handles unauthorized, or other uncategorised error
@@ -85,10 +107,10 @@ const Register = () => {
       />
       {errors.password && <ErrorText>Invalid password</ErrorText>}
 
-        {signupFailureMessage && (
-          <ErrorText>Signup failed: {signupFailureMessage}</ErrorText>
-        )}
-        <FormButtonGroup form="registerForm" submitValue="Sign up" />
+      {signupFailureMessage && (
+        <ErrorText>Signup failed: {signupFailureMessage}</ErrorText>
+      )}
+      <FormButtonGroup form="registerForm" submitValue="Sign up" />
     </FormContainer>
   )
 }
