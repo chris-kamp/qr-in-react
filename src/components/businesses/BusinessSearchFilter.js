@@ -16,7 +16,7 @@ const BusinessSearchFilter = (props) => {
   }, [])
 
   const onSubmit = (data) => {
-    // console.debug(data)
+    console.debug(data)
 
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/search`, {
@@ -47,7 +47,7 @@ const BusinessSearchFilter = (props) => {
             <span className='has-text-grey'>Filter By Type:</span>
             {categories.map(category => (
               <label className="checkbox mx-1">
-                <input {...register(`filter.${category.name}`)} type="checkbox" className="checkbox mx-1" />
+                <input {...register(`filter._${category.id}`)} type="checkbox" className="checkbox mx-1" />
                 {category.name}
               </label>
             ))}

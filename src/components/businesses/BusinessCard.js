@@ -20,10 +20,10 @@ const BusinessCard = (props) => {
         <Card.Content>{`${props.business.description.substr(0, 120)}...`}</Card.Content>
         <Card.Image src="https://placekitten.com/444/444" size={'square'}></Card.Image>
         <Card.Content className="is-size-7 is-uppercase has-text-weight-semibold">
-          {props.business.address.street}
-          , {props.business.address.suburb.name}
-          , {props.business.address.postcode.code}
-          , {props.business.address.state.name}
+          {props.business.address?.street}
+          , {props.business.address?.suburb.name}
+          , {props.business.address?.postcode.code}
+          , {props.business.address?.state.name}
           <Link to={`/businesses/${props.business.id}`}>
             <Button className="is-pulled-right" size={'small'} color={'link'}>View</Button>
           </Link>
