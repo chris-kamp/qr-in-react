@@ -17,7 +17,7 @@ const Businesses = () => {
   return (
     <Container>
       <Heading className="has-text-centered">Browse Businesses</Heading>
-      <BusinessSearchFilter />
+      <BusinessSearchFilter searchCallback={(data) => {setBusinesses(data)}} />
       <Columns>
         {businesses.map(business => (
           <Columns.Column
@@ -29,7 +29,8 @@ const Businesses = () => {
             }}
             key={business.id}
           >
-            <BusinessCard key={business.id} business={business}></BusinessCard>
+            {/* <BusinessCard key={business.id} business={business}></BusinessCard> */}
+            {JSON.stringify(business)}
           </Columns.Column>
         ))}
       </Columns>

@@ -4,9 +4,9 @@ import { useForm } from "react-hook-form"
 import { stateContext } from "../../stateReducer"
 import { Card, Heading, Button } from "react-bulma-components"
 
-const BusinessSearchFilter = () => {
+const BusinessSearchFilter = (props) => {
   const [categories, setCategories] = useState([])
-  const {register, handleSubmit, setValue, formState: { errors }} = useForm();
+  const {register, handleSubmit, setValue, formState, formState: { errors }} = useForm();
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_ENDPOINT}/categories`)
@@ -16,7 +16,16 @@ const BusinessSearchFilter = () => {
   }, [])
 
   const onSubmit = (data) => {
-    console.debug(data)
+    // console.debug(data)
+
+    axios
+      .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/search`, {
+        params: data
+      })
+      .then((response) => {
+        // console.debug(response)
+        props.searchCallback(response.data)
+      })
   };
 
   return (
