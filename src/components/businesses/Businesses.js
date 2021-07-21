@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import BusinessCard from './BusinessCard';
-import { Heading, Columns } from 'react-bulma-components';
+import BusinessSearchFilter from './BusinessSearchFilter';
+import { Container, Heading, Columns } from 'react-bulma-components';
 
 const Businesses = () => {
   const [businesses, setBusinesses] = useState([]);
@@ -14,16 +15,26 @@ const Businesses = () => {
   }, []);
 
   return (
-    <React.Fragment>
-      <Heading>Browse Businesses</Heading>
+    <Container>
+      <Heading className="has-text-centered">Browse Businesses</Heading>
+      <BusinessSearchFilter searchCallback={(data) => {setBusinesses(data)}} />
       <Columns>
         {businesses.map(business => (
-          <Columns.Column key={business.id}>
-            <BusinessCard key={business.id} business={business}></BusinessCard>
+          <Columns.Column
+            desktop={{
+              size: 'half'
+            }}
+            tablet={{
+              size: 'full'
+            }}
+            key={business.id}
+          >
+            {/* <BusinessCard key={business.id} business={business}></BusinessCard> */}
+            {JSON.stringify(business)}
           </Columns.Column>
         ))}
       </Columns>
-    </React.Fragment>
+    </Container>
   )
 }
 
