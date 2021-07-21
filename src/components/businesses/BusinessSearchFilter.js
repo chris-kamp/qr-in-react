@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from "react"
 import axios from "axios"
 import { useForm } from "react-hook-form"
-import { stateContext } from "../../stateReducer"
-import { Card, Heading, Button } from "react-bulma-components"
+import { Card, Button } from "react-bulma-components"
 
 const BusinessSearchFilter = (props) => {
   const [categories, setCategories] = useState([])
@@ -16,14 +15,11 @@ const BusinessSearchFilter = (props) => {
   }, [])
 
   const onSubmit = (data) => {
-    console.debug(data)
-
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/search`, {
         params: data
       })
       .then((response) => {
-        // console.debug(response)
         props.searchCallback(response.data)
       })
   };
