@@ -4,6 +4,7 @@ import Home from "./components/Home"
 import Businesses from "./components/businesses/Businesses"
 import Business from "./components/businesses/Business"
 import NewBusiness from "./components/businesses/NewBusiness"
+import EditBusiness from "./components/businesses/EditBusiness"
 import Checkin from "./components/checkin/Checkin"
 import Login from "./components/Login"
 import Profile from "./components/Profile"
@@ -37,6 +38,9 @@ function App() {
           </Route>
           <Route exact path="/businesses/:id">
             <Business />
+          </Route>
+          <Route exact path="/businesses/:id/edit">
+            <EditBusiness />
           </Route>
           <Route exact path="/businesses/:id/checkin">
             <Checkin />
