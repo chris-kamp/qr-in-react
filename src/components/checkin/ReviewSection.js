@@ -1,5 +1,5 @@
 import { Heading } from "react-bulma-components"
-import { useEffect, useContext, useState } from "react"
+import { useContext, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useHistory } from "react-router"
 import { stateContext } from "../../stateReducer"

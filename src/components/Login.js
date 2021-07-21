@@ -2,10 +2,14 @@ import { useState, useContext } from "react"
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import { useHistory } from "react-router-dom"
-import { PageHeader } from "../styled-components/GeneralStyledComponents"
 import { ErrorText } from "../styled-components/FormStyledComponents"
-import { passwordValidator, emailValidator } from "../utils/Validators"
+import { loginPasswordValidator, emailValidator } from "../utils/Validators"
 import { stateContext } from "../stateReducer"
+import FormContainer from "./shared/FormContainer"
+import Input from "./shared/Input"
+import InputLabel from "./shared/InputLabel"
+import FormButtonGroup from "./shared/FormButtonGroup"
+import PageHeading from "./shared/PageHeading"
 
 const loginFailureMessages = {
   unauthorised: "Username or password incorrect",
@@ -49,34 +53,34 @@ const Login = () => {
   }
 
   return (
-    <>
-      <PageHeader>Login</PageHeader>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            type="text"
-            id="email"
-            {...register("email", emailValidator)}
-            autoFocus
-          />
-          {errors.email && <ErrorText>Invalid email address</ErrorText>}
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            {...register("password", passwordValidator)}
-          />
-          {errors.password && <ErrorText>Invalid password</ErrorText>}
-        </div>
-        {loginFailureMessage && (
-          <ErrorText>Login failed: {loginFailureMessage}</ErrorText>
-        )}
-        <input type="submit" />
-      </form>
-    </>
+    <FormContainer>
+      <PageHeading>Login</PageHeading>
+      <form onSubmit={handleSubmit(onSubmit)} id="loginForm" />
+      <InputLabel htmlFor="email" text="Email" isFirst />
+      <Input
+        register={register}
+        name="email"
+        validator={emailValidator}
+        placeholder="email@example.com"
+        form="loginForm"
+        focus
+      />
+      {errors.email && <ErrorText>Invalid email address</ErrorText>}
+      <InputLabel htmlFor="password" text="Password" />
+      <Input
+        type="password"
+        name="password"
+        form="loginForm"
+        register={register}
+        validator={loginPasswordValidator}
+        placeholder="Password"
+      />
+      {errors.password && <ErrorText>Invalid password</ErrorText>}
+      {loginFailureMessage && (
+        <ErrorText>Login failed: {loginFailureMessage}</ErrorText>
+      )}
+      <FormButtonGroup form="loginForm" submitValue="Login" />
+    </FormContainer>
   )
 }
 
