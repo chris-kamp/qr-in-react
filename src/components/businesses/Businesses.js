@@ -29,8 +29,7 @@ const Businesses = () => {
             }}
             key={business.id}
           >
-            {/* <BusinessCard key={business.id} business={business}></BusinessCard> */}
-            {JSON.stringify(business)}
+            <BusinessCard key={business.id} business={business}></BusinessCard>
           </Columns.Column>
         ))}
       </Columns>
