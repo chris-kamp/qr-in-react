@@ -1,17 +1,41 @@
 import { Navbar, Button } from "react-bulma-components"
-import { Link } from "react-router-dom"
-import { useState, useContext } from "react"
+import { Link, useHistory, useLocation } from "react-router-dom"
+import { useState, useContext, useEffect } from "react"
 import { stateContext } from "../stateReducer"
 
 const Nav = () => {
   const [dropdownActive, setDropdownActive] = useState(false)
   const toggleDropdown = () => setDropdownActive(!dropdownActive)
   const { session, dispatch } = useContext(stateContext)
+  const history = useHistory()
+  const location = useLocation()
+
+    // On route change, push previous location to "backPath". Used to redirect back to previous location (only within the site) following certain actions.
+    useEffect(() => {
+      const unlisten = history.listen(() => {
+        dispatch({
+          type: "setBackPath",
+          backPath: location.pathname
+        })
+      });
+      return () => {
+        unlisten();
+      };
+    }, [history, location, dispatch]);
 
   const logOut = () => {
     dispatch({
       type: "logout",
     })
+    // On logout, redirect to home and notify user of successful logout
+    dispatch({
+      type: "pushAlert",
+      alert: {
+        type: "notice",
+        message: `Logged out successfully`,
+      },
+    })
+    history.push("/")
   }
 
   return (

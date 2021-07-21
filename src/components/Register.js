@@ -1,8 +1,7 @@
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import { useHistory } from "react-router-dom"
-import { PageHeader } from "../styled-components/GeneralStyledComponents"
 import { ErrorText } from "../styled-components/FormStyledComponents"
 import {
   usernameValidator,
@@ -10,17 +9,36 @@ import {
   emailValidator,
 } from "../utils/Validators"
 import { stateContext } from "../stateReducer"
+import InputLabel from "./shared/InputLabel"
+import Input from "./shared/Input"
+import FormButtonGroup from "./shared/FormButtonGroup"
+import PageHeading from "./shared/PageHeading"
+import FormContainer from "./shared/FormContainer"
+import { goBack } from "../utils/Utils"
 
 const Register = () => {
   const [signupFailureMessage, setSignupFailureMessage] = useState()
   const history = useHistory()
-  const { dispatch } = useContext(stateContext)
+  const { dispatch, backPath, session } = useContext(stateContext)
   // react-hook-form setup
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm()
+  // Redirect back to previous page if user is already logged in
+  useEffect(() => {
+    // Do nothing if user not logged in
+    if (!session) return
+    dispatch({
+      type: "pushAlert",
+      alert: {
+        type: "error",
+        message: "You are already logged in",
+      },
+    })
+    goBack(backPath, history)
+  })
 
   // Handle login form submission
   const onSubmit = (data) => {
@@ -33,10 +51,18 @@ const Register = () => {
           type: "login",
           session: { token: response.data.token, user: response.data.user },
         })
+        // Flash alert for succcessful signup
+        dispatch({
+          type: "pushAlert",
+          alert: {
+            type: "notice",
+            message: `Signup successful! You are now logged in as ${response.data.user.username}`,
+          },
+        })
         // Remove signup failure message on successful signup
         setSignupFailureMessage(null)
-        // Redirect to home
-        history.push("/")
+        // Redirect to last visited page, or to home if no previous page set (eg. came from external site)
+        backPath ? history.push(backPath) : history.push("/")
       })
       .catch((error) => {
         // Display error messages - handles unauthorized, or other uncategorised error
@@ -46,43 +72,47 @@ const Register = () => {
   }
 
   return (
-    <>
-      <PageHeader>Register</PageHeader>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            type="text"
-            id="email"
-            {...register("email", emailValidator)}
-            autoFocus
-          />
-          {errors.email && <ErrorText>Invalid email address</ErrorText>}
-        </div>
-        <div>
-          <label htmlFor="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            {...register("username", usernameValidator)}
-          />
-          {errors.username && <ErrorText>Invalid username</ErrorText>}
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            {...register("password", passwordValidator)}
-          />
-          {errors.password && <ErrorText>Invalid password</ErrorText>}
-        </div>
-        {signupFailureMessage && (
-          <ErrorText>Login failed: {signupFailureMessage}</ErrorText>
-        )}
-        <input type="submit" />
-      </form>
-    </>
+    <FormContainer>
+      <PageHeading>Register</PageHeading>
+      <form onSubmit={handleSubmit(onSubmit)} id="registerForm" />
+      <InputLabel htmlFor="email" text="Email" isFirst />
+      <Input
+        register={register}
+        name="email"
+        validator={emailValidator}
+        placeholder="email@example.com"
+        form="registerForm"
+        focus
+      />
+      {errors.email && <ErrorText>Invalid email address</ErrorText>}
+
+      <InputLabel htmlFor="username" text="Username" />
+      <Input
+        register={register}
+        name="username"
+        validator={usernameValidator}
+        placeholder="Username"
+        form="registerForm"
+      />
+      {errors.username && <ErrorText>Invalid username</ErrorText>}
+
+      <InputLabel htmlFor="password" text="Password" />
+      <Input
+        type="password"
+        name="password"
+        form="registerForm"
+        register={register}
+        validator={passwordValidator}
+        placeholder="Password"
+      />
+      {errors.password && <ErrorText>Invalid password</ErrorText>}
+
+      {signupFailureMessage && (
+        <ErrorText>Signup failed: {signupFailureMessage}</ErrorText>
+      )}
+      <FormButtonGroup form="registerForm" submitValue="Sign up" />
+
+    </FormContainer>
   )
 }
 

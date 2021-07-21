@@ -1,11 +1,17 @@
-import { useState, useContext } from "react"
+import { useState, useContext, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import { useHistory } from "react-router-dom"
-import { PageHeader } from "../styled-components/GeneralStyledComponents"
 import { ErrorText } from "../styled-components/FormStyledComponents"
-import { passwordValidator, emailValidator } from "../utils/Validators"
+import { loginPasswordValidator, emailValidator } from "../utils/Validators"
 import { stateContext } from "../stateReducer"
+import FormContainer from "./shared/FormContainer"
+import Input from "./shared/Input"
+import InputLabel from "./shared/InputLabel"
+import FormButtonGroup from "./shared/FormButtonGroup"
+import PageHeading from "./shared/PageHeading"
+import { goBack } from "../utils/Utils"
+
 
 const loginFailureMessages = {
   unauthorised: "Username or password incorrect",
@@ -14,7 +20,7 @@ const loginFailureMessages = {
 
 const Login = () => {
   const [loginFailureMessage, setLoginFailureMessage] = useState()
-  const { dispatch } = useContext(stateContext)
+  const { dispatch, backPath, session } = useContext(stateContext)
 
   const history = useHistory()
   // react-hook-form setup
@@ -23,6 +29,20 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm()
+
+  // Redirect back to previous page if user is already logged in
+  useEffect(() => {
+    // Do nothing if user not logged in
+    if (!session) return
+    dispatch({
+      type: "pushAlert",
+      alert: {
+        type: "error",
+        message: "You are already logged in",
+      },
+    })
+    goBack(backPath, history)
+  })
 
   // Handle login form submission
   const onSubmit = (data) => {
@@ -35,10 +55,18 @@ const Login = () => {
           type: "login",
           session: { token: response.data.token, user: response.data.user },
         })
+        // Flash alert for succcessful login
+        dispatch({
+          type: "pushAlert",
+          alert: {
+            type: "notice",
+            message: `You are now logged in as ${response.data.user.username}`,
+          },
+        })
         // Remove login failure message on successful login
         setLoginFailureMessage(null)
-        // Redirect to home
-        history.push("/")
+        // Redirect back to last page (or home if none)
+        goBack(backPath, history)
       })
       .catch((error) => {
         // Display error messages - handles unauthorized, or other uncategorised error
@@ -49,34 +77,34 @@ const Login = () => {
   }
 
   return (
-    <>
-      <PageHeader>Login</PageHeader>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            type="text"
-            id="email"
-            {...register("email", emailValidator)}
-            autoFocus
-          />
-          {errors.email && <ErrorText>Invalid email address</ErrorText>}
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            {...register("password", passwordValidator)}
-          />
-          {errors.password && <ErrorText>Invalid password</ErrorText>}
-        </div>
-        {loginFailureMessage && (
-          <ErrorText>Login failed: {loginFailureMessage}</ErrorText>
-        )}
-        <input type="submit" />
-      </form>
-    </>
+    <FormContainer>
+      <PageHeading>Login</PageHeading>
+      <form onSubmit={handleSubmit(onSubmit)} id="loginForm" />
+      <InputLabel htmlFor="email" text="Email" isFirst />
+      <Input
+        register={register}
+        name="email"
+        validator={emailValidator}
+        placeholder="email@example.com"
+        form="loginForm"
+        focus
+      />
+      {errors.email && <ErrorText>Invalid email address</ErrorText>}
+      <InputLabel htmlFor="password" text="Password" />
+      <Input
+        type="password"
+        name="password"
+        form="loginForm"
+        register={register}
+        validator={loginPasswordValidator}
+        placeholder="Password"
+      />
+      {errors.password && <ErrorText>Invalid password</ErrorText>}
+      {loginFailureMessage && (
+        <ErrorText>Login failed: {loginFailureMessage}</ErrorText>
+      )}
+      <FormButtonGroup form="loginForm" submitValue="Login" />
+    </FormContainer>
   )
 }
 
