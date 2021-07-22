@@ -82,10 +82,10 @@ const Business = () => {
 
             <br />
 
-            {business.promotions.length > 0 && (
+            {business.active_promotions.length > 0 && (
               <React.Fragment>
                 <h3 className="is-size-4 has-text-centered">Promotions</h3>
-                {business.promotions.map((promotion) => {
+                {business.active_promotions.map((promotion) => {
                   return (
                     <p className="mb-2">
                       {promotion.description}
