@@ -54,6 +54,9 @@ const Nav = () => {
           <Navbar.Item renderAs={Link} to="/businesses">
             Browse
           </Navbar.Item>
+          {session && <Navbar.Item renderAs={Link} to={`/users/${session.user.id}`}>
+            My Profile
+          </Navbar.Item>}
         </Navbar.Container>
         <Navbar.Container align="end" className="is-flex">
           {session && (
