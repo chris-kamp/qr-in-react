@@ -19,7 +19,7 @@ const Businesses = () => {
       <Heading className="has-text-centered">Browse Businesses</Heading>
       <BusinessSearchFilter searchCallback={(data) => {setBusinesses(data)}} />
       <Columns>
-        {businesses.map(business => (
+        {businesses.length > 0 ? businesses.map(business => (
           <Columns.Column
             desktop={{
               size: 'half'
@@ -31,7 +31,11 @@ const Businesses = () => {
           >
             <BusinessCard key={business.id} business={business}></BusinessCard>
           </Columns.Column>
-        ))}
+        )) : (
+          <Columns.Column size={'full'}>
+            <Heading size={4}>No Businesses Found</Heading>
+          </Columns.Column>
+        )}
       </Columns>
     </Container>
   )

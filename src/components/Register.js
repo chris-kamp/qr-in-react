@@ -111,6 +111,7 @@ const Register = () => {
         <ErrorText>Signup failed: {signupFailureMessage}</ErrorText>
       )}
       <FormButtonGroup form="registerForm" submitValue="Sign up" />
+
     </FormContainer>
   )
 }

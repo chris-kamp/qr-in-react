@@ -1,12 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState, useContext } from 'react';
+import { Link, useParams, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Heading, Content, Columns, Image, Card, Table, Tag } from 'react-bulma-components';
+import QRCode from 'qrcode.react'
 import { Rating } from "@material-ui/lab"
+import { Button } from 'react-bulma-components';
+import { stateContext } from "../../stateReducer";
 
 const Business = () => {
+  const context = useContext(stateContext);
+  const { dispatch } = useContext(stateContext)
   const [business, setBusiness] = useState(false);
   const { id } = useParams();
+  const history = useHistory()
+  const isOwnBusiness = business.user_id == context.session?.user.id
+
+  const deleteBusiness = () => {
+    axios.delete(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
+      .then(() => {
+        dispatch({
+          type: 'pushAlert',
+          alert: {
+            message: 'Business deleted',
+            type: 'notice'
+          }
+        })
+
+        history.push('/businesses')
+      })
+  }
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
@@ -43,11 +65,38 @@ const Business = () => {
                   </React.Fragment>
                   )}
               </Content>
-              <Content>{business.description}</Content>
-              <code>
-                Promotions
-              </code>
+              <Content>{business.description}
+                <Heading size={6}>Address</Heading>
+                <p>
+                  {business.address?.street}
+                , {business.address?.suburb.name}
+                , {business.address?.postcode.code}
+                , {business.address?.state.name}
+                </p>
+                <Link to={`/businesses/${business.id}/checkin`}>
+                  <Button color='primary'>Checkin</Button>
+                </Link>
+              </Content>
             </Columns.Column>
+            {isOwnBusiness && (
+              <Columns.Column size='full' className='has-text-centered'>
+                <QRCode
+                  value={`${process.env.REACT_APP_SITE_URL}/businesses/${id}/checkin`}
+                  level={'L'}
+                />
+                <Link to={`/promotions/`}>
+                  <Button className='mx-5' color='success'>New Promotion</Button>
+                </Link>
+                <Link to={`/businesses/${id}/edit`}>
+                  <Button className='mx-5' color='warning'>Edit Listing</Button>
+                </Link>
+                <Button onClick={() => {
+                  if (window.confirm('Are you sure you want to delete this business?')) {
+                    deleteBusiness()
+                  }
+                }} className='mx-5' color='danger'>Delete Listing</Button>
+              </Columns.Column>
+            )}
           </Columns>
           {business.checkins.length > 0 ? (
             <Card>

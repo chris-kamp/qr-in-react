@@ -1,19 +1,32 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router";
+import { useHistory, useParams } from "react-router";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { stateContext } from "../../stateReducer";
 import { Container, Card, Heading, Button } from "react-bulma-components";
 import LocationAutocomplete from "./LocationAutocomplete";
 
-const NewBusiness = () => {
+const EditBusiness = () => {
   const context = useContext(stateContext);
   const { dispatch } = useContext(stateContext);
-  const {register, handleSubmit, setValue, setError, formState: { errors }} = useForm();
+  const {register, handleSubmit, getValues, setValue, formState: { errors }} = useForm();
   const [useManualAddress, setUseManualAddress] = useState(false);
   const [categories, setCategories] = useState([])
-
+  const { id } = useParams();
   const history = useHistory()
+
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
+      .then((response) => {
+        setValue('business', {...response.data, address: {
+          street: response.data.address.street,
+          suburb: response.data.address.suburb.name,
+          postcode: response.data.address.postcode.code,
+          state: response.data.address.state.name
+        }})
+      })
+  }, [])
+
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_ENDPOINT}/categories`)
@@ -26,12 +39,12 @@ const NewBusiness = () => {
     data.business.user_id = context.session.user.id
 
     axios
-      .post(`${process.env.REACT_APP_API_ENDPOINT}/businesses`, data)
+      .patch(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`, data)
       .then((response) => {
         dispatch({
           type: 'pushAlert',
           alert: {
-            message: 'Business created successfully',
+            message: 'Business updated successfully',
             type: 'notice'
           }
         })
@@ -52,20 +65,20 @@ const NewBusiness = () => {
   return (
     <Container>
       <Card>
-        <Card.Header.Title>New Business</Card.Header.Title>
+        <Card.Header.Title>Edit Business</Card.Header.Title>
         <Card.Content>
           <form onSubmit={handleSubmit(onSubmit)}>
           <Heading size={5}>Business details</Heading>
 
           <div className="control">
             <label className="label" htmlFor="business.name">Name</label>
-            <input className="input" type="text" id="name" {...register('business.name', { required: true }) } />
+            <input className="input" type="text" id="name" {...register('business.name')} />
             {errors.business?.name && 'Name is required'}
           </div>
 
           <div className="control">
             <label className="label" htmlFor="business.description">Description</label>
-            <textarea className="input" type="text" id="description" {...register('business.description', { required: true })}></textarea>
+            <textarea className="input" type="text" id="description" {...register('business.description')}></textarea>
             {errors.business?.description && 'Description is required'}
           </div>
 
@@ -121,7 +134,7 @@ const NewBusiness = () => {
 
           <br />
 
-          <Button submit color='primary'>Create Business</Button>
+          <Button submit color='primary'>Update Business</Button>
           </form>
         </Card.Content>
       </Card>
@@ -129,4 +142,4 @@ const NewBusiness = () => {
   )
 }
 
-export default NewBusiness
+export default EditBusiness

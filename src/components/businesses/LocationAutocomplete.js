@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from "react-places-autocomplete";
 
 const LocationAutocomplete = (props) => {
-  const [address, setAddress] = useState('')
+  const [address, setAddress] = useState(props.addresPlaceholder || '')
 
   const handleChange = address => {
     setAddress(address)
@@ -64,6 +64,8 @@ const LocationAutocomplete = (props) => {
     })
 
     address.street = address.street.trim()
+
+    console.debug(address)
 
     return address;
   }

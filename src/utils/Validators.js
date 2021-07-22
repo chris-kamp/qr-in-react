@@ -9,5 +9,4 @@ const loginPasswordValidator = { required: true }
 // Review content must not exceed 200 characters in length
 // TODO: Check that this length fits well in the UI
 const reviewContentValidator = { maxLength: 200 }
-
 export { emailValidator, usernameValidator, passwordValidator, loginPasswordValidator, reviewContentValidator }
