@@ -1,157 +1,82 @@
 import { useState, useEffect } from "react"
 import { Image } from "cloudinary-react"
-import { Button } from "react-bulma-components"
+import { Button, Columns, Container, Heading } from "react-bulma-components"
 import { stateContext } from "../stateReducer"
 import { useContext } from "react"
 import { useParams } from "react-router"
 import axios from "axios"
+import PageHeading from "./shared/PageHeading"
+import { useHistory } from "react-router-dom"
+import { createProfileImgWidget, getProfileImgWidgetOpener } from "../utils/CloudinaryWidgets"
 
 const Profile = () => {
   const { session, dispatch } = useContext(stateContext)
-  const { id } = useParams();
+  const { id } = useParams()
+  const history = useHistory()
+  const [user, setUser] = useState()
 
-  const [profileImgSrc, setProfileImgSrc] = useState()
-
-  // Fetch the user's profile image
+  // Fetch the user's public details
   useEffect(() => {
     axios
-      .get(
-        `${process.env.REACT_APP_API_ENDPOINT}/users/${id}/public`
-      )
+      .get(`${process.env.REACT_APP_API_ENDPOINT}/users/${id}/public`)
       .then((response) => {
-        setProfileImgSrc(response.data.profile_img_src)
+        setUser(response.data)
       })
-      .catch((err) => {
+      // Redirect to home and display flash message error if user loading fails
+      .catch(() => {
         dispatch({
           type: "pushAlert",
           alert: {
             type: "error",
             message:
-              "Something went wrong when attempting to load profile image",
+              "Something went wrong. You may have tried to access a profile that doesn't exist.",
           },
         })
+        history.push("/")
       })
-  }, [dispatch, id])
+  }, [id, dispatch, history])
 
-  let widget = window.cloudinary.createUploadWidget(
-    {
-      cloudName: "chriskamp",
-      uploadPreset: "gp17ernf",
-      folder: "qrin",
-      // Max file size ~2.5mb
-      maxFileSize: 2500000,
-      preBatch: (cb, data) => {
-        // Disallow upload of more than one file
-        if (data.files.length > 1) {
-          dispatch({
-            type: "pushAlert",
-            alert: {
-              type: "error",
-              message: "You can only attach one image",
-            },
-          })
-          cb({ cancel: true })
-        } else if (!session) {
-          dispatch({
-            type: "pushAlert",
-            alert: {
-              message:
-                "Image upload failed: You must be logged in to upload a profile image.",
-              type: "error",
-            },
-          })
-          cb({ cancel: true })
-        } else {
-          cb()
-        }
-      },
-    },
-    (error, result) => {
-      if (!error && result && result.event === "success") {
-        console.log("Done! Here is the image info: ", result.info.public_id)
-        axios
-          .patch(
-            `${process.env.REACT_APP_API_ENDPOINT}/users/${session?.user.id}`,
-            {
-              profile_img_src: result.info.public_id,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token}`,
-              },
-            }
-          )
-          .then((response) => {
-            dispatch({
-              type: "pushAlert",
-              alert: {
-                message: "Profile image successfully updated",
-                type: "notice",
-              },
-            })
-            setProfileImgSrc(response.data.profile_img_src)
-          })
-          .catch((error) => {
-            if (
-              error.response.status === 401 ||
-              error.response.status === 404
-            ) {
-              dispatch({
-                type: "pushAlert",
-                alert: {
-                  message:
-                    "Image upload failed: You must be logged in to upload a profile image.",
-                  type: "error",
-                },
-              })
-            } else {
-              dispatch({
-                type: "pushAlert",
-                alert: {
-                  message: "Image upload failed. Please try again shortly.",
-                  type: "error",
-                },
-              })
-            }
-          })
-      }
-    }
-  )
+  const widget = createProfileImgWidget(window, dispatch, session, setUser)
+  const showWidget = getProfileImgWidgetOpener(widget, session, dispatch)
 
-  const showWidget = () => {
-    if (!session) {
-      dispatch({
-        type: "pushAlert",
-        alert: {
-          message: "You must be logged in to upload a profile image.",
-          type: "error",
-        },
-      })
-    } else {
-      widget.open()
-    }
-  }
   return (
-    <div>
-      <h1>Profile</h1>
-      <Button
-        className="button has-background-primary-dark has-text-white has-text-weight-bold mx-1"
-        style={{ borderRadius: "0.6rem" }}
-        onClick={showWidget}
-      >
-        Upload
-      </Button>
-      {profileImgSrc ? (
-        <Image
-          cloudName="chriskamp"
-          publicId={profileImgSrc}
-          width="300"
-          crop="scale"
-        />
-      ) : (
-        <p>Image placeholder</p>
-      )}
-    </div>
+    <Container>
+      <PageHeading>Profile</PageHeading>
+      <Columns className="is-vcentered">
+        <Columns.Column>
+          {user?.profile_img_src ? (
+            <Image
+              cloudName="chriskamp"
+              publicId={user.profile_img_src}
+              width="300"
+              crop="scale"
+              style={{ display: "block", borderRadius: "50%" }}
+              className="mx-auto"
+            />
+          ) : (
+            <p>Image placeholder</p>
+          )}
+          {session?.user.id.toString() === id && (<Button
+            className="button has-background-primary-dark has-text-white has-text-weight-bold mx-auto mt-2"
+            style={{ borderRadius: "0.6rem", display: "block" }}
+            onClick={showWidget}
+          >
+            Update Profile Picture
+          </Button>)}
+        </Columns.Column>
+        <Columns.Column>
+          <Heading className="is-size-4 has-text-centered-mobile">Bio</Heading>
+          {user?.bio ? (
+            <p className="has-text-centered-mobile">{user.bio}</p>
+          ) : (
+            <p className="has-text-centered-mobile">This user hasn't created a bio yet!</p>
+          )}
+        </Columns.Column>
+      </Columns>
+      <section>
+        <Heading className="is-size-4 has-text-centered mt-4">Recent Checkins</Heading>
+      </section>
+    </Container>
   )
 }
 
