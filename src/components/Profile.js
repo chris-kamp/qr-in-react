@@ -31,7 +31,7 @@ const Profile = () => {
           },
         })
       })
-  }, [])
+  }, [dispatch, id])
 
   let widget = window.cloudinary.createUploadWidget(
     {
