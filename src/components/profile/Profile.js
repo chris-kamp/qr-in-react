@@ -1,22 +1,26 @@
 import { useState, useEffect } from "react"
 import { Image } from "cloudinary-react"
 import { Button, Columns, Container, Heading } from "react-bulma-components"
-import { stateContext } from "../stateReducer"
+import { stateContext } from "../../stateReducer"
 import { useContext } from "react"
 import { useParams } from "react-router"
 import axios from "axios"
-import PageHeading from "./shared/PageHeading"
+import PageHeading from "../shared/PageHeading"
 import { useHistory } from "react-router-dom"
 import {
   createProfileImgWidget,
   getProfileImgWidgetOpener,
-} from "../utils/CloudinaryWidgets"
+} from "../../utils/CloudinaryWidgets"
+import UserBio from "./UserBio"
+import UserBioForm from "./UserBioForm"
 
 const Profile = () => {
   const { session, dispatch } = useContext(stateContext)
   const { id } = useParams()
   const history = useHistory()
   const [user, setUser] = useState()
+  const [editing, setEditing] = useState(false)
+  const toggleForm = () => setEditing(!editing)
 
   // Fetch the user's public details
   useEffect(() => {
@@ -44,7 +48,7 @@ const Profile = () => {
 
   return (
     <Container>
-      <PageHeading>Profile</PageHeading>
+      <PageHeading>{user?.username}</PageHeading>
       <Columns className="is-vcentered">
         <Columns.Column>
           <Image
@@ -71,13 +75,9 @@ const Profile = () => {
         </Columns.Column>
         <Columns.Column>
           <Heading className="is-size-4 has-text-centered-mobile">Bio</Heading>
-          {user?.bio ? (
-            <p className="has-text-centered-mobile">{user.bio}</p>
-          ) : (
-            <p className="has-text-centered-mobile">
-              This user hasn't created a bio yet!
-            </p>
-          )}
+          {editing ? <UserBioForm {...{toggleForm, setUser, user}} /> :
+          <UserBio {...{ user, toggleForm }} />}
+
         </Columns.Column>
       </Columns>
       <section>
