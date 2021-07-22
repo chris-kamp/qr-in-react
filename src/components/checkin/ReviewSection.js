@@ -86,6 +86,7 @@ const ReviewSection = ({ id, checkinId, business }) => {
             <Rating
               {...register("rating", { required: true })}
               value={rating}
+              name="rating"
               onChange={(event, newValue) => {
                 setRating(newValue)
               }}

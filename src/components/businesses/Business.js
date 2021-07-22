@@ -11,7 +11,7 @@ const Business = () => {
   const [business, setBusiness] = useState(false)
   const { id } = useParams()
   const history = useHistory()
-  const isOwnBusiness = business.user_id == session?.user.id
+  const [isOwnBusiness, setIsOwnBusiness] = useState(false)
 
   const deleteBusiness = () => {
     axios.delete(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`, {
@@ -34,8 +34,9 @@ const Business = () => {
     axios.get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
       .then(response => {
         setBusiness(response.data)
+        setIsOwnBusiness(response.data.user_id === session?.user.id)
       })
-  }, [])
+  }, [id, session])
 
   return (
     <Container>
@@ -103,27 +104,29 @@ const Business = () => {
               <Card.Header.Title>Recent Check-ins</Card.Header.Title>
               <Card.Content>
                 <Table className="is-fullwidth">
-                  {business.checkins.map(checkin => (
-                    <tr>
-                      <td>
-                        <Image size={64} rounded src="https://placekitten.com/64/64"></Image>
-                      </td>
-                      <td>
-                        <span className="has-text-grey">{new Date(checkin.created_at).toLocaleString()}</span>
-                        {checkin.review?.rating && (
-                          <span className="is-pulled-right">
-                            <Rating size='small' value={checkin.review?.rating} disabled />
-                          </span>
-                        )}
-                        <br />
-                        <b>{checkin.user.username}</b> checked in at <b>{business.name}</b>
-                        {checkin.review?.content && (
-                          <span> and left a review: "<i>{checkin.review.content}</i>"</span>
-                        )}
-                      </td>
-                    </tr>
-                  )
-                  )}
+                  <tbody>
+                    {business.checkins.map(checkin => (
+                      <tr key={checkin.id}>
+                        <td>
+                          <Image size={64} rounded src="https://placekitten.com/64/64"></Image>
+                        </td>
+                        <td>
+                          <span className="has-text-grey">{new Date(checkin.created_at).toLocaleString()}</span>
+                          {checkin.review?.rating && (
+                            <span className="is-pulled-right">
+                              <Rating name="rating" size='small' value={parseInt(checkin.review?.rating)} disabled />
+                            </span>
+                          )}
+                          <br />
+                          <b>{checkin.user.username}</b> checked in at <b>{business.name}</b>
+                          {checkin.review?.content && (
+                            <span> and left a review: "<i>{checkin.review.content}</i>"</span>
+                          )}
+                        </td>
+                      </tr>
+                    )
+                    )}
+                  </tbody>
                 </Table>
               </Card.Content>
             </Card>

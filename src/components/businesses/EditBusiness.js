@@ -56,7 +56,6 @@ const EditBusiness = () => {
         dispatch({
           type: 'pushAlert',
           alert: {
-            // message: 'Errors: ' + Object.keys(err.response.data.errors).map(k => `${k}: ${err.response.data.errors[k].join(', ')}`).join(', '),
             message: JSON.stringify(err.response.data),
             type: 'error'
           }
@@ -88,7 +87,7 @@ const EditBusiness = () => {
           }
         })
       })
-  }, [dispatch, history, session])
+  }, [dispatch, history, session, id, setValue])
 
   return (
     <FormContainer>

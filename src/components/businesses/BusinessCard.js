@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Card, Heading, Tag, Button } from 'react-bulma-components'
+import { Card, Tag, Button } from 'react-bulma-components'
 import React from 'react'
 
 const BusinessCard = (props) => {
