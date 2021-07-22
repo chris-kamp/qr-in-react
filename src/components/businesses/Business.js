@@ -7,15 +7,16 @@ import QRCode from 'qrcode.react'
 import { stateContext } from "../../stateReducer"
 
 const Business = () => {
-  const context = useContext(stateContext)
-  const { dispatch } = useContext(stateContext)
+  const { session, dispatch } = useContext(stateContext)
   const [business, setBusiness] = useState(false)
   const { id } = useParams()
   const history = useHistory()
-  const isOwnBusiness = business.user_id == context.session?.user.id
+  const isOwnBusiness = business.user_id == session?.user.id
 
   const deleteBusiness = () => {
-    axios.delete(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
+    axios.delete(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`, {
+      headers: { Authorization: `Bearer ${session?.token}` }
+    })
       .then(() => {
         dispatch({
           type: 'pushAlert',
