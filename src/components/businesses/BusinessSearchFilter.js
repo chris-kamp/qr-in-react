@@ -5,12 +5,12 @@ import { Card, Button } from "react-bulma-components"
 
 const BusinessSearchFilter = (props) => {
   const [categories, setCategories] = useState([])
-  const {register, handleSubmit, setValue, formState, formState: { errors }} = useForm();
+  const { register, handleSubmit, setValue, formState, formState: { errors } } = useForm()
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_ENDPOINT}/categories`)
       .then(response => {
-        setCategories(response.data);
+        setCategories(response.data)
       })
   }, [])
 
@@ -22,7 +22,7 @@ const BusinessSearchFilter = (props) => {
       .then((response) => {
         props.searchCallback(response.data)
       })
-  };
+  }
 
   return (
     <Card className="my-5">

@@ -1,17 +1,16 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { Link, useParams, useHistory } from 'react-router-dom';
-import axios from 'axios';
-import { Container, Heading, Content, Columns, Image, Card, Table, Tag } from 'react-bulma-components';
-import QRCode from 'qrcode.react'
+import React, { useEffect, useState, useContext } from 'react'
+import { Link, useParams, useHistory } from 'react-router-dom'
+import axios from 'axios'
+import { Container, Heading, Button, Content, Columns, Image, Card, Table, Tag } from 'react-bulma-components'
 import { Rating } from "@material-ui/lab"
-import { Button } from 'react-bulma-components';
-import { stateContext } from "../../stateReducer";
+import QRCode from 'qrcode.react'
+import { stateContext } from "../../stateReducer"
 
 const Business = () => {
-  const context = useContext(stateContext);
+  const context = useContext(stateContext)
   const { dispatch } = useContext(stateContext)
-  const [business, setBusiness] = useState(false);
-  const { id } = useParams();
+  const [business, setBusiness] = useState(false)
+  const { id } = useParams()
   const history = useHistory()
   const isOwnBusiness = business.user_id == context.session?.user.id
 
@@ -33,9 +32,9 @@ const Business = () => {
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
       .then(response => {
-        setBusiness(response.data);
-      });
-  }, []);
+        setBusiness(response.data)
+      })
+  }, [])
 
   return (
     <Container>
@@ -63,15 +62,15 @@ const Business = () => {
                       }).length} checkins this week
                     </Heading>
                   </React.Fragment>
-                  )}
+                )}
               </Content>
               <Content>{business.description}
                 <Heading size={6}>Address</Heading>
                 <p>
                   {business.address?.street}
-                , {business.address?.suburb.name}
-                , {business.address?.postcode.code}
-                , {business.address?.state.name}
+                  , {business.address?.suburb.name}
+                  , {business.address?.postcode.code}
+                  , {business.address?.state.name}
                 </p>
                 <Link to={`/businesses/${business.id}/checkin`}>
                   <Button color='primary'>Checkin</Button>
@@ -109,20 +108,20 @@ const Business = () => {
                         <Image size={64} rounded src="https://placekitten.com/64/64"></Image>
                       </td>
                       <td>
-                          <span className="has-text-grey">{new Date(checkin.created_at).toLocaleString()}</span>
-                          {checkin.review?.rating && (
-                            <span className="is-pulled-right">
-                              <Rating size='small' value={checkin.review?.rating} disabled />
-                            </span>
-                          )}
-                          <br />
-                          <b>{checkin.user.username}</b> checked in at <b>{business.name}</b>
-                          {checkin.review?.content && (
-                            <span> and left a review: "<i>{checkin.review.content}</i>"</span>
-                          )}
+                        <span className="has-text-grey">{new Date(checkin.created_at).toLocaleString()}</span>
+                        {checkin.review?.rating && (
+                          <span className="is-pulled-right">
+                            <Rating size='small' value={checkin.review?.rating} disabled />
+                          </span>
+                        )}
+                        <br />
+                        <b>{checkin.user.username}</b> checked in at <b>{business.name}</b>
+                        {checkin.review?.content && (
+                          <span> and left a review: "<i>{checkin.review.content}</i>"</span>
+                        )}
                       </td>
                     </tr>
-                    )
+                  )
                   )}
                 </Table>
               </Card.Content>

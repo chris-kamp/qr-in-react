@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
-import { Card, Heading, Tag, Button } from 'react-bulma-components';
-import React from 'react';
+import { Link } from 'react-router-dom'
+import { Card, Heading, Tag, Button } from 'react-bulma-components'
+import React from 'react'
 
 const BusinessCard = (props) => {
   const starRating = (props.business.reviews.reduce((a, b) => a + parseFloat(b.rating), 0) / props.business.reviews.length).toFixed(1)
@@ -11,7 +11,7 @@ const BusinessCard = (props) => {
           {props.business.name}
           {starRating > 0 && (
             <Tag className="ml-auto" rounded color={'primary'}>
-              { `${starRating} ★` }
+              {`${starRating} ★`}
             </Tag>
           )}
         </Card.Header.Title>

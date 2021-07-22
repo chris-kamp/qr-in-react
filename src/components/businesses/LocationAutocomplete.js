@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import PlacesAutocomplete, { geocodeByAddress, getLatLng } from "react-places-autocomplete";
+import React, { useState } from "react"
+import PlacesAutocomplete, { geocodeByAddress } from "react-places-autocomplete"
 
 const LocationAutocomplete = (props) => {
   const [address, setAddress] = useState(props.addresPlaceholder || '')
@@ -11,7 +11,9 @@ const LocationAutocomplete = (props) => {
   const handleSelect = address => {
     geocodeByAddress(address)
       .then(results => {
+        // Display the received formatted address in the search bar
         setAddress(results[0].formatted_address)
+        // pass the parsed address data back to the parent component's callback function
         props.addressCallback(parseAddress(results[0].address_components))
       })
       .catch(error => {
@@ -20,6 +22,7 @@ const LocationAutocomplete = (props) => {
   }
 
   const parseAddress = (addressComponents) => {
+    // Setup a hash to map our address data structure to the one provided.
     let componentParse = {
       street: ['street_number', 'street_address', 'route'],
       suburb: [
@@ -49,6 +52,7 @@ const LocationAutocomplete = (props) => {
       state: ''
     }
 
+    // Parse Google's address_components into something that fits our data structure
     addressComponents.forEach(component => {
       for (let parse in componentParse) {
         if (componentParse[parse].indexOf(component.types[0]) !== -1) {
@@ -63,11 +67,9 @@ const LocationAutocomplete = (props) => {
       }
     })
 
+    // Trim street edge whitespace
     address.street = address.street.trim()
-
-    console.debug(address)
-
-    return address;
+    return address
   }
 
   return (
@@ -79,23 +81,23 @@ const LocationAutocomplete = (props) => {
         debounce={500}
         highlightFirstSuggestion={true}
         shouldFetchSuggestions={address.length > 5}
-        searchOptions={{componentRestrictions: { country: 'au' }}}
+        searchOptions={{ componentRestrictions: { country: 'au' } }}
       >
         {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
           <div className="control">
             <input
               className="input"
               type="text"
-              { ...getInputProps({placeholder: 'Start typing to search location'}) }
+              {...getInputProps({ placeholder: 'Start typing to search location' })}
             />
             <div>
               {loading && <p>Loading Suggestions...</p>}
               {suggestions.map(suggestion => (
-                  <div key={suggestion.id}
-                    { ...getSuggestionItemProps(suggestion, {})}
-                  >
-                    <span>{suggestion.description}</span>
-                  </div>
+                <div key={suggestion.id}
+                  {...getSuggestionItemProps(suggestion, {})}
+                >
+                  <span>{suggestion.description}</span>
+                </div>
               ))}
             </div>
           </div>
