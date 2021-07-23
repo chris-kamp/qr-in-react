@@ -1,5 +1,4 @@
 import { Rating } from "@material-ui/lab"
-import { useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import ProfileImg from "../profile/ProfileImg"
 

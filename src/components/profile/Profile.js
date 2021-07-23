@@ -5,7 +5,7 @@ import { useContext } from "react"
 import { useParams } from "react-router"
 import axios from "axios"
 import PageHeading from "../shared/PageHeading"
-import { Link, useHistory } from "react-router-dom"
+import { useHistory } from "react-router-dom"
 import {
   createProfileImgWidget,
   getProfileImgWidgetOpener,
