@@ -17,6 +17,7 @@ import {
 import { Rating } from "@material-ui/lab"
 import QRCode from "qrcode.react"
 import { stateContext } from "../../stateReducer"
+import CheckinsSection from "../checkin/CheckinsSection"
 const Business = () => {
   const { session, dispatch } = useContext(stateContext)
   const [business, setBusiness] = useState(false)
@@ -163,54 +164,7 @@ const Business = () => {
           <Section>
             <Container>
               <PageHeading>Recent Check-ins</PageHeading>
-              {business.checkins.length > 0 ? (
-                <Card>
-                  <Card.Content>
-                    <Table className="is-fullwidth">
-                      <tbody>
-                        {business.checkins.map((checkin) => (
-                          <tr key={checkin.id}>
-                            <td>
-                              <Image
-                                size={64}
-                                rounded
-                                src="https://placekitten.com/64/64"
-                              ></Image>
-                            </td>
-                            <td>
-                              <span className="has-text-grey">
-                                {new Date(checkin.created_at).toLocaleString()}
-                              </span>
-                              {checkin.review?.rating && (
-                                <span className="is-pulled-right">
-                                  <Rating
-                                    name="rating"
-                                    size="small"
-                                    value={parseInt(checkin.review?.rating)}
-                                    disabled
-                                  />
-                                </span>
-                              )}
-                              <br />
-                              <b>{checkin.user.username}</b> checked in at{" "}
-                              <b>{business.name}</b>
-                              {checkin.review?.content && (
-                                <span>
-                                  {" "}
-                                  and left a review: "
-                                  <i>{checkin.review.content}</i>"
-                                </span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                  </Card.Content>
-                </Card>
-              ) : (
-                "No checkins"
-              )}
+              <CheckinsSection checkins={business.checkins} />
             </Container>
           </Section>
         </React.Fragment>
