@@ -8,7 +8,6 @@ import {
   Button,
   Content,
   Columns,
-  Image,
   Tag,
   Section,
 } from "react-bulma-components"
@@ -71,7 +70,7 @@ const Business = () => {
           <PageHeading>{business.name}</PageHeading>
           <Columns>
             <Columns.Column>
-              <ListingImg business={business} />
+              <ListingImg src={business.listing_img_src} />
             </Columns.Column>
             <Columns.Column>
               <Content>

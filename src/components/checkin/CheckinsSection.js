@@ -17,7 +17,7 @@ const CheckinsSection = ({checkins}) => {
           </Card.Content>
         </Card>
       ) : (
-        "No checkins"
+        <p className="has-text-centered">No checkins</p>
       )}
     </>
   )
