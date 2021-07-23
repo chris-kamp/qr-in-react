@@ -24,7 +24,7 @@ const createProfileImgWidget = (window, dispatch, session, updateUserProfileImg)
             type: "pushAlert",
             alert: {
               message:
-                "Image upload failed: You must be logged in to upload a profile image.",
+                "Image upload failed: You must be logged in to upload an image.",
               type: "error",
             },
           })
@@ -36,7 +36,6 @@ const createProfileImgWidget = (window, dispatch, session, updateUserProfileImg)
     },
     (error, result) => {
       if (!error && result && result.event === "success") {
-        console.log("Done! Here is the image info: ", result.info.public_id)
         axios
           .patch(
             `${process.env.REACT_APP_API_ENDPOINT}/users/${session?.user.id}`,
@@ -87,13 +86,55 @@ const createProfileImgWidget = (window, dispatch, session, updateUserProfileImg)
   )
 }
 
+const createListingImgWidget = (window, dispatch, session, setListingImgSrc) => {
+  return window.cloudinary.createUploadWidget(
+    {
+      cloudName: "chriskamp",
+      uploadPreset: "gp17ernf",
+      folder: "qrin",
+      // Max file size ~2.5mb
+      maxFileSize: 2500000,
+      preBatch: (cb, data) => {
+        // Disallow upload of more than one file
+        if (data.files.length > 1) {
+          dispatch({
+            type: "pushAlert",
+            alert: {
+              type: "error",
+              message: "You can only attach one image",
+            },
+          })
+          cb({ cancel: true })
+        } else if (!session) {
+          dispatch({
+            type: "pushAlert",
+            alert: {
+              message:
+                "Image upload failed: You must be logged in to upload an image.",
+              type: "error",
+            },
+          })
+          cb({ cancel: true })
+        } else {
+          cb()
+        }
+      },
+    },
+    (error, result) => {
+      if (!error && result && result.event === "success") {
+        setListingImgSrc(result.info.public_id)
+      }
+    }
+  )
+}
+
 const getProfileImgWidgetOpener = (widget, session, dispatch) => {
   return () => {
     if (!session) {
       dispatch({
         type: "pushAlert",
         alert: {
-          message: "You must be logged in to upload a profile image.",
+          message: "You must be logged in to upload an image.",
           type: "error",
         },
       })
@@ -103,4 +144,4 @@ const getProfileImgWidgetOpener = (widget, session, dispatch) => {
   }
 }
 
-export { createProfileImgWidget, getProfileImgWidgetOpener }
+export { createProfileImgWidget, createListingImgWidget, getProfileImgWidgetOpener }

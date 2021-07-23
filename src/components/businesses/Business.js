@@ -8,16 +8,13 @@ import {
   Button,
   Content,
   Columns,
-  Image,
-  Card,
-  Table,
   Tag,
   Section,
 } from "react-bulma-components"
-import { Rating } from "@material-ui/lab"
 import QRCode from "qrcode.react"
 import { stateContext } from "../../stateReducer"
 import CheckinsSection from "../checkin/CheckinsSection"
+import ListingImg from "./ListingImg"
 const Business = () => {
   const { session, dispatch } = useContext(stateContext)
   const [business, setBusiness] = useState(false)
@@ -73,7 +70,7 @@ const Business = () => {
           <PageHeading>{business.name}</PageHeading>
           <Columns>
             <Columns.Column>
-              <Image src="https://placekitten.com/g/666/666" />
+              <ListingImg src={business.listing_img_src} />
             </Columns.Column>
             <Columns.Column>
               <Content>
