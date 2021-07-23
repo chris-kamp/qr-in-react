@@ -1,22 +1,22 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { Link, useParams, useHistory } from 'react-router-dom';
-import axios from 'axios';
-import { Container, Heading, Content, Columns, Image, Card, Table, Tag } from 'react-bulma-components';
-import QRCode from 'qrcode.react'
+import React, { useEffect, useState, useContext } from 'react'
+import { Link, useParams, useHistory } from 'react-router-dom'
+import axios from 'axios'
+import { Container, Heading, Button, Content, Columns, Image, Card, Table, Tag } from 'react-bulma-components'
 import { Rating } from "@material-ui/lab"
-import { Button } from 'react-bulma-components';
-import { stateContext } from "../../stateReducer";
+import QRCode from 'qrcode.react'
+import { stateContext } from "../../stateReducer"
 
 const Business = () => {
-  const context = useContext(stateContext);
-  const { dispatch } = useContext(stateContext)
-  const [business, setBusiness] = useState(false);
-  const { id } = useParams();
+  const { session, dispatch } = useContext(stateContext)
+  const [business, setBusiness] = useState(false)
+  const { id } = useParams()
   const history = useHistory()
-  const isOwnBusiness = business.user_id == context.session?.user.id
+  const [isOwnBusiness, setIsOwnBusiness] = useState(false)
 
   const deleteBusiness = () => {
-    axios.delete(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
+    axios.delete(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`, {
+      headers: { Authorization: `Bearer ${session?.token}` }
+    })
       .then(() => {
         dispatch({
           type: 'pushAlert',
@@ -33,9 +33,10 @@ const Business = () => {
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
       .then(response => {
-        setBusiness(response.data);
-      });
-  }, []);
+        setBusiness(response.data)
+        setIsOwnBusiness(response.data.user_id === session?.user.id)
+      })
+  }, [id, session])
 
   return (
     <Container>
@@ -63,15 +64,15 @@ const Business = () => {
                       }).length} checkins this week
                     </Heading>
                   </React.Fragment>
-                  )}
+                )}
               </Content>
               <Content>{business.description}
                 <Heading size={6}>Address</Heading>
                 <p>
                   {business.address?.street}
-                , {business.address?.suburb.name}
-                , {business.address?.postcode.code}
-                , {business.address?.state.name}
+                  , {business.address?.suburb.name}
+                  , {business.address?.postcode.code}
+                  , {business.address?.state.name}
                 </p>
                 <Link to={`/businesses/${business.id}/checkin`}>
                   <Button color='primary'>Checkin</Button>
@@ -103,16 +104,17 @@ const Business = () => {
               <Card.Header.Title>Recent Check-ins</Card.Header.Title>
               <Card.Content>
                 <Table className="is-fullwidth">
-                  {business.checkins.map(checkin => (
-                    <tr>
-                      <td>
-                        <Image size={64} rounded src="https://placekitten.com/64/64"></Image>
-                      </td>
-                      <td>
+                  <tbody>
+                    {business.checkins.map(checkin => (
+                      <tr key={checkin.id}>
+                        <td>
+                          <Image size={64} rounded src="https://placekitten.com/64/64"></Image>
+                        </td>
+                        <td>
                           <span className="has-text-grey">{new Date(checkin.created_at).toLocaleString()}</span>
                           {checkin.review?.rating && (
                             <span className="is-pulled-right">
-                              <Rating size='small' value={checkin.review?.rating} disabled />
+                              <Rating name="rating" size='small' value={parseInt(checkin.review?.rating)} disabled />
                             </span>
                           )}
                           <br />
@@ -120,10 +122,11 @@ const Business = () => {
                           {checkin.review?.content && (
                             <span> and left a review: "<i>{checkin.review.content}</i>"</span>
                           )}
-                      </td>
-                    </tr>
+                        </td>
+                      </tr>
                     )
-                  )}
+                    )}
+                  </tbody>
                 </Table>
               </Card.Content>
             </Card>
