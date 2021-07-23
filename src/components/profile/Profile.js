@@ -13,6 +13,7 @@ import {
 import UserBio from "./UserBio"
 import UserBioForm from "./UserBioForm"
 import ProfileImg from "./ProfileImg"
+import CheckinsSection from "../checkin/CheckinsSection"
 
 const Profile = () => {
   const { session, dispatch } = useContext(stateContext)
@@ -21,6 +22,9 @@ const Profile = () => {
   const [user, setUser] = useState()
   const [editing, setEditing] = useState(false)
   const toggleForm = () => setEditing(!editing)
+  const updateUserProfileImg = (new_img_src) => {
+    setUser({...user, profile_img_src: new_img_src})
+  }
 
   // Fetch the user's public details
   useEffect(() => {
@@ -28,6 +32,7 @@ const Profile = () => {
       .get(`${process.env.REACT_APP_API_ENDPOINT}/users/${id}/public`)
       .then((response) => {
         setUser(response.data)
+        console.log(response.data.checkins)
       })
       // Redirect to home and display flash message error if user loading fails
       .catch(() => {
@@ -43,7 +48,7 @@ const Profile = () => {
       })
   }, [id, dispatch, history])
 
-  const widget = createProfileImgWidget(window, dispatch, session, setUser)
+  const widget = createProfileImgWidget(window, dispatch, session, updateUserProfileImg)
   const showWidget = getProfileImgWidgetOpener(widget, session, dispatch)
 
   return (
@@ -73,6 +78,7 @@ const Profile = () => {
         <Heading className="is-size-4 has-text-centered mt-4">
           Recent Checkins
         </Heading>
+        {user?.checkins && <CheckinsSection checkins={user.checkins} />}
       </section>
     </Container>
   )

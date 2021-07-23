@@ -1,7 +1,11 @@
 import { Rating } from "@material-ui/lab"
+import { useEffect, useState } from "react"
+import { Link, useLocation } from "react-router-dom"
 import ProfileImg from "../profile/ProfileImg"
 
 const CheckinCard = ({ checkin }) => {
+  const location = useLocation()
+
   return (
     <tr>
       <td>
@@ -22,8 +26,25 @@ const CheckinCard = ({ checkin }) => {
           </span>
         )}
         <br />
-        <b>{checkin.user.username}</b> checked in at{" "}
-        <b>{checkin.business.name}</b>
+        <b>
+          {location.pathname === `/users/${checkin.user.id}` ? (
+            checkin.user.username
+          ) : (
+            <Link to={`/users/${checkin.user.id}`}>
+              {checkin.user.username}
+            </Link>
+          )}
+        </b>{" "}
+        checked in at{" "}
+        <b>
+          {location.pathname === `/businesses/${checkin.business.id}` ? (
+            checkin.business.name
+          ) : (
+            <Link to={`/businesses/${checkin.business.id}`}>
+              {checkin.business.name}
+            </Link>
+          )}{" "}
+        </b>
         {checkin.review?.content && (
           <span>
             {" "}

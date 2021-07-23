@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const createProfileImgWidget = (window, dispatch, session, setUser) => {
+const createProfileImgWidget = (window, dispatch, session, updateUserProfileImg) => {
   return window.cloudinary.createUploadWidget(
     {
       cloudName: "chriskamp",
@@ -57,12 +57,12 @@ const createProfileImgWidget = (window, dispatch, session, setUser) => {
                 type: "notice",
               },
             })
-            setUser(response.data)
+            updateUserProfileImg(response.data.profile_img_src)
           })
           .catch((error) => {
             if (
-              error.response.status === 401 ||
-              error.response.status === 404
+              error.response?.status === 401 ||
+              error.response?.status === 404
             ) {
               dispatch({
                 type: "pushAlert",
