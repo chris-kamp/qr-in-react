@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import { Image } from "cloudinary-react"
 import { Button, Columns, Container, Heading } from "react-bulma-components"
 import { stateContext } from "../../stateReducer"
 import { useContext } from "react"
@@ -13,6 +12,7 @@ import {
 } from "../../utils/CloudinaryWidgets"
 import UserBio from "./UserBio"
 import UserBioForm from "./UserBioForm"
+import ProfileImg from "./ProfileImg"
 
 const Profile = () => {
   const { session, dispatch } = useContext(stateContext)
@@ -51,18 +51,7 @@ const Profile = () => {
       <PageHeading>{user?.username}</PageHeading>
       <Columns className="is-vcentered">
         <Columns.Column>
-          <Image
-            cloudName="chriskamp"
-            publicId={
-              user?.profile_img_src
-                ? user.profile_img_src
-                : "v1626930815/qrin/profile-pic-placeholder_rwztji"
-            }
-            width="300"
-            crop="scale"
-            style={{ display: "block", borderRadius: "50%" }}
-            className="mx-auto"
-          />
+          <figure style={{maxWidth: "400px", margin: "0 auto"}}>{user && <ProfileImg user={user} size={400} rounded />}</figure>
           {session?.user.id.toString() === id && (
             <Button
               className="button has-background-primary-dark has-text-white has-text-weight-bold mx-auto mt-2"
