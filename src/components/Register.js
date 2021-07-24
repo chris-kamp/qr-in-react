@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import { useHistory } from "react-router-dom"
-import { ErrorText } from "../styled-components/FormStyledComponents"
+import ErrorText from "./shared/ErrorText"
 import {
   usernameValidator,
   passwordValidator,

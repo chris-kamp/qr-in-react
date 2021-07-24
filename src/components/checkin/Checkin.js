@@ -6,7 +6,7 @@ import ButtonWide from "../shared/ButtonWide"
 import CheckinButton from "./CheckinButton"
 import { stateContext } from "../../stateReducer"
 import ReviewSection from "./ReviewSection"
-import { ErrorText } from "../../styled-components/FormStyledComponents"
+import ErrorText from "../shared/ErrorText"
 import FormContainer from "../shared/FormContainer"
 import { enforceLogin } from "../../utils/Utils"
 
