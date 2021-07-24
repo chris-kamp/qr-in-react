@@ -12,7 +12,6 @@ import FormButtonGroup from "./shared/FormButtonGroup"
 import PageHeading from "./shared/PageHeading"
 import { goBack } from "../utils/Utils"
 
-
 const loginFailureMessages = {
   unauthorised: "Username or password incorrect",
   other: "Something went wrong. Try logging in again.",
@@ -41,8 +40,9 @@ const Login = () => {
         message: "You are already logged in",
       },
     })
-    goBack(backPath, history)
-  })
+    // Redirect back to last page or to home. Do not redirect to login or register pages to prevent infinite loop.
+    goBack(backPath, history, ["/login", "/register"])
+  }, [backPath, dispatch, history, session])
 
   // Handle login form submission
   const onSubmit = (data) => {
@@ -50,6 +50,8 @@ const Login = () => {
     axios
       .post(`${process.env.REACT_APP_API_ENDPOINT}/users/login`, data)
       .then((response) => {
+        // Redirect back to last page or to home. Do not redirect to login or register pages to prevent infinite loop.
+        goBack(backPath, history, ["/login", "/register"])
         // Update state context with token and user details from API response
         dispatch({
           type: "login",
@@ -65,8 +67,6 @@ const Login = () => {
         })
         // Remove login failure message on successful login
         setLoginFailureMessage(null)
-        // Redirect back to last page (or home if none)
-        goBack(backPath, history)
       })
       .catch((error) => {
         // Display error messages - handles unauthorized, or other uncategorised error

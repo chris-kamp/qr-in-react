@@ -37,8 +37,9 @@ const Register = () => {
         message: "You are already logged in",
       },
     })
-    goBack(backPath, history)
-  })
+    // Redirect back to last page or to home. Do not redirect to login or register pages to prevent infinite loop.
+    goBack(backPath, history, ["/login", "/register"])
+  }, [backPath, dispatch, history, session])
 
   // Handle login form submission
   const onSubmit = (data) => {
@@ -46,6 +47,8 @@ const Register = () => {
     axios
       .post(`${process.env.REACT_APP_API_ENDPOINT}/users/register`, data)
       .then((response) => {
+        // Redirect back to last page or to home. Do not redirect to login or register pages to prevent infinite loop.
+        goBack(backPath, history, ["/login", "/register"])
         // Update state context with token and user details from API response
         dispatch({
           type: "login",
@@ -61,8 +64,6 @@ const Register = () => {
         })
         // Remove signup failure message on successful signup
         setSignupFailureMessage(null)
-        // Redirect to last visited page, or to home if no previous page set (eg. came from external site)
-        backPath ? history.push(backPath) : history.push("/")
       })
       .catch((error) => {
         // Display error messages - handles unauthorized, or other uncategorised error
@@ -111,7 +112,6 @@ const Register = () => {
         <ErrorText>Signup failed: {signupFailureMessage}</ErrorText>
       )}
       <FormButtonGroup form="registerForm" submitValue="Sign up" />
-
     </FormContainer>
   )
 }
