@@ -20,6 +20,7 @@ export default function stateReducer(currentState, action) {
     }
 
     case "pushAlert": {
+      currentState.alerts.length >= 3 && currentState.alerts.shift()
       return {
         ...currentState,
         alerts: [
