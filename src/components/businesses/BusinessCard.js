@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom';
-import { Card, Heading, Tag, Button } from 'react-bulma-components';
-import React from 'react';
+import { Link } from 'react-router-dom'
+import { Card, Tag, Button } from 'react-bulma-components'
+import React from 'react'
+import CardListingImg from './CardListingImg'
 
 const BusinessCard = (props) => {
   const starRating = (props.business.reviews.reduce((a, b) => a + parseFloat(b.rating), 0) / props.business.reviews.length).toFixed(1)
@@ -11,13 +12,13 @@ const BusinessCard = (props) => {
           {props.business.name}
           {starRating > 0 && (
             <Tag className="ml-auto" rounded color={'primary'}>
-              { `${starRating} ★` }
+              {`${starRating} ★`}
             </Tag>
           )}
         </Card.Header.Title>
         <Card.Header.Title size={6}>{props.business.category.name}</Card.Header.Title>
         <Card.Content>{`${props.business.description.substr(0, 120)}...`}</Card.Content>
-        <Card.Image src="https://placekitten.com/444/444" size={'square'}></Card.Image>
+        <CardListingImg src={props.business.listing_img_src} />
         <Card.Content className="is-size-7 is-clearfix is-uppercase has-text-weight-semibold">
           {props.business.address?.street}
           , {props.business.address?.suburb.name}

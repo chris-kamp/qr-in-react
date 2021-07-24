@@ -6,8 +6,9 @@ import Business from "./components/businesses/Business"
 import NewBusiness from "./components/businesses/NewBusiness"
 import EditBusiness from "./components/businesses/EditBusiness"
 import Checkin from "./components/checkin/Checkin"
+import NewPromotion from "./components/businesses/NewPromotion"
 import Login from "./components/Login"
-import Profile from "./components/Profile"
+import Profile from "./components/profile/Profile"
 import Register from "./components/Register"
 import stateReducer, { stateContext } from "./stateReducer"
 import "bulma/css/bulma.min.css"
@@ -44,6 +45,9 @@ function App() {
           </Route>
           <Route exact path="/businesses/:id/checkin">
             <Checkin />
+          </Route>
+          <Route exact path="/businesses/:id/promotions/new">
+            <NewPromotion />
           </Route>
           <Route exact path="/users/:id">
             <Profile />
