@@ -10,6 +10,7 @@ import ErrorText from "../shared/ErrorText"
 import FormButtonGroup from "../shared/FormButtonGroup"
 import TextArea from "../shared/TextArea"
 import { useParams } from "react-router-dom"
+import { flashError, flashNotice } from "../../utils/Utils"
 
 const NewPromotion = () => {
   const { dispatch } = useContext(stateContext)
@@ -27,28 +28,17 @@ const NewPromotion = () => {
     axios
       .post(`${process.env.REACT_APP_API_ENDPOINT}/promotions`, data)
       .then((response) => {
-        dispatch({
-          type: "pushAlert",
-          alert: {
-            message: "Promotion created successfully",
-            type: "notice",
-          },
-        })
-
+        flashNotice(dispatch, "Promotion created successfully")
         history.push(`/businesses/${response.data.business_id}`)
       })
       .catch((error) => {
-        dispatch({
-          type: "pushAlert",
-          alert: {
-            message:
-              "Errors: " +
-              Object.keys(error.response.data.errors)
-                .map((k) => `${k}: ${error.response.data.errors[k].join(", ")}`)
-                .join(", "),
-            type: "error",
-          },
-        })
+        flashError(
+          dispatch,
+          "Errors: " +
+            Object.keys(error.response.data.errors)
+              .map((k) => `${k}: ${error.response.data.errors[k].join(", ")}`)
+              .join(", ")
+        )
       })
   }
 

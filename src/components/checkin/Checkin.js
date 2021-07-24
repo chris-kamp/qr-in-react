@@ -8,7 +8,7 @@ import { stateContext } from "../../stateReducer"
 import ReviewSection from "./ReviewSection"
 import ErrorText from "../shared/ErrorText"
 import FormContainer from "../shared/FormContainer"
-import { enforceLogin } from "../../utils/Utils"
+import { enforceLogin, flashError } from "../../utils/Utils"
 
 const Checkin = () => {
   const [business, setBusiness] = useState()
@@ -35,14 +35,10 @@ const Checkin = () => {
       })
       // Redirect to home and display flash message error if business loading fails
       .catch(() => {
-        dispatch({
-          type: "pushAlert",
-          alert: {
-            type: "error",
-            message:
-              "Something went wrong. You may have tried to access a checkin page that doesn't exist.",
-          },
-        })
+        flashError(
+          dispatch,
+          "Something went wrong. You may have tried to access a checkin page that doesn't exist."
+        )
         history.push("/")
       })
   }, [dispatch, history, id, session])
@@ -81,13 +77,7 @@ const Checkin = () => {
         // TODO: Handle case where user might be logged in but unauthorised
         if (err.response?.status === 401) {
           history.push("/login")
-          dispatch({
-            type: "pushAlert",
-            alert: {
-              type: "error",
-              message: "You must be logged in to check in",
-            },
-          })
+          flashError(dispatch, "You must be logged in to check in")
         } else {
           // Display error messages - handles general errors not otherwise dealt with
           setCheckinFailureMessage(

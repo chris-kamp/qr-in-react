@@ -1,14 +1,30 @@
+// Display a flash error
+const flashError = (dispatch, message) => {
+  dispatch({
+    type: "pushAlert",
+    alert: {
+      type: "error",
+      message,
+    },
+  })
+}
+
+// Display a flash notice
+const flashNotice = (dispatch, message) => {
+  dispatch({
+    type: "pushAlert",
+    alert: {
+      type: "notice",
+      message,
+    },
+  })
+}
+
 const enforceLogin = (message, session, dispatch, history) => {
   // If user is logged in, do nothing
   if (session) return false
   // Otherwise, redirect to login page with error message
-  dispatch({
-    type: "pushAlert",
-    alert: {
-      message,
-      type: "error",
-    },
-  })
+  flashError(dispatch, message)
   history.push("/login")
   return true
 }
@@ -20,4 +36,4 @@ const goBack = (backPath, history, excluded) =>
     ? history.push(backPath)
     : history.push("/")
 
-export { enforceLogin, goBack }
+export { enforceLogin, goBack, flashError, flashNotice }

@@ -15,6 +15,7 @@ import UserBioForm from "./UserBioForm"
 import ProfileImg from "./ProfileImg"
 import CheckinsSection from "../checkin/CheckinsSection"
 import BusinessSection from "./BusinessSection"
+import { flashError } from "../../utils/Utils"
 
 const Profile = () => {
   const { session, dispatch } = useContext(stateContext)
@@ -47,14 +48,10 @@ const Profile = () => {
       })
       // Redirect to home and display flash message error if user loading fails
       .catch(() => {
-        dispatch({
-          type: "pushAlert",
-          alert: {
-            type: "error",
-            message:
-              "Something went wrong. You may have tried to access a profile that doesn't exist.",
-          },
-        })
+        flashError(
+          dispatch,
+          "Something went wrong. You may have tried to access a profile that doesn't exist."
+        )
         history.push("/")
       })
   }, [id, dispatch, history, isCurrentUser, session])

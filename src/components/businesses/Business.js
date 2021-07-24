@@ -15,6 +15,7 @@ import QRCode from "qrcode.react"
 import { stateContext } from "../../stateReducer"
 import CheckinsSection from "../checkin/CheckinsSection"
 import ListingImg from "./ListingImg"
+import { flashError, flashNotice } from "../../utils/Utils"
 const Business = () => {
   const { session, dispatch } = useContext(stateContext)
   const [business, setBusiness] = useState(false)
@@ -27,14 +28,7 @@ const Business = () => {
         headers: { Authorization: `Bearer ${session?.token}` },
       })
       .then(() => {
-        dispatch({
-          type: "pushAlert",
-          alert: {
-            message: "Business deleted",
-            type: "notice",
-          },
-        })
-
+        flashNotice(dispatch, "Business deleted")
         history.push("/businesses")
       })
       .catch((err) => {
@@ -63,14 +57,7 @@ const Business = () => {
       })
       // Redirect to home and display flash message error if business loading fails
       .catch(() => {
-        dispatch({
-          type: "pushAlert",
-          alert: {
-            type: "error",
-            message:
-              "Something went wrong. You may have tried to access a business listing that doesn't exist.",
-          },
-        })
+        flashError(dispatch, "Something went wrong. You may have tried to access a business listing that doesn't exist.")
         history.push("/")
       })
   }, [id, session, dispatch, history])

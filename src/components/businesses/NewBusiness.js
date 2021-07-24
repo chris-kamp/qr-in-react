@@ -4,7 +4,7 @@ import axios from "axios"
 import { useForm } from "react-hook-form"
 import { stateContext } from "../../stateReducer"
 import LocationAutocomplete from "./LocationAutocomplete"
-import { enforceLogin } from "../../utils/Utils"
+import { enforceLogin, flashError, flashNotice } from "../../utils/Utils"
 import FormContainer from "../shared/FormContainer"
 import PageHeading from "../shared/PageHeading"
 import InputLabel from "../shared/InputLabel"
@@ -67,33 +67,20 @@ const NewBusiness = () => {
       )
       .then((response) => {
         console.debug(response)
-
-        dispatch({
-          type: "pushAlert",
-          alert: {
-            message: "Business created successfully",
-            type: "notice",
-          },
-        })
-
+        flashNotice(dispatch, "Business created successfully")
         setFailureMessage(null)
-
         // View the business with the ID returned from Rails
         history.push(`/businesses/${response.data.id}`)
       })
       .catch((err) => {
         // Display the errors to the user
-        dispatch({
-          type: "pushAlert",
-          alert: {
-            message:
-              "Errors: " +
-              Object.keys(err.response.data.errors)
-                .map((k) => `${k}: ${err.response.data.errors[k].join(", ")}`)
-                .join(", "),
-            type: "error",
-          },
-        })
+        flashError(
+          dispatch,
+          "Errors: " +
+            Object.keys(err.response.data.errors)
+              .map((k) => `${k}: ${err.response.data.errors[k].join(", ")}`)
+              .join(", ")
+        )
       })
   }
 

@@ -2,6 +2,7 @@ import { Navbar, Button } from "react-bulma-components"
 import { Link, useHistory, useLocation } from "react-router-dom"
 import { useState, useContext, useEffect } from "react"
 import { stateContext } from "../stateReducer"
+import { flashNotice } from "../utils/Utils"
 
 const Nav = () => {
   const [dropdownActive, setDropdownActive] = useState(false)
@@ -28,13 +29,7 @@ const Nav = () => {
       type: "logout",
     })
     // On logout, redirect to home and notify user of successful logout
-    dispatch({
-      type: "pushAlert",
-      alert: {
-        type: "notice",
-        message: `Logged out successfully`,
-      },
-    })
+    flashNotice(dispatch, "Logged out successfully")
     history.push("/")
   }
 

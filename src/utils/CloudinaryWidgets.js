@@ -1,4 +1,5 @@
 import axios from "axios"
+import { flashError, flashNotice } from "./Utils"
 
 const createProfileImgWidget = (
   window,
@@ -16,23 +17,10 @@ const createProfileImgWidget = (
       preBatch: (cb, data) => {
         // Disallow upload of more than one file
         if (data.files.length > 1) {
-          dispatch({
-            type: "pushAlert",
-            alert: {
-              type: "error",
-              message: "You can only attach one image",
-            },
-          })
+          flashError(dispatch, "You can only attach one image")
           cb({ cancel: true })
         } else if (!session) {
-          dispatch({
-            type: "pushAlert",
-            alert: {
-              message:
-                "Image upload failed: You must be logged in to upload an image.",
-              type: "error",
-            },
-          })
+          flashError(dispatch, "Image upload failed: You must be logged in to upload an image.")
           cb({ cancel: true })
         } else {
           cb()
@@ -54,13 +42,7 @@ const createProfileImgWidget = (
             }
           )
           .then((response) => {
-            dispatch({
-              type: "pushAlert",
-              alert: {
-                message: "Profile image successfully updated",
-                type: "notice",
-              },
-            })
+            flashNotice(dispatch, "Profile image successfully updated")
             updateUserProfileImg(response.data.profile_img_src)
           })
           .catch((error) => {
@@ -68,22 +50,9 @@ const createProfileImgWidget = (
               error.response?.status === 401 ||
               error.response?.status === 404
             ) {
-              dispatch({
-                type: "pushAlert",
-                alert: {
-                  message:
-                    "Image upload failed: You must be logged in to upload a profile image.",
-                  type: "error",
-                },
-              })
+              flashError(dispatch, "Image upload failed: You must be logged in to upload a profile image.")
             } else {
-              dispatch({
-                type: "pushAlert",
-                alert: {
-                  message: "Image upload failed. Please try again shortly.",
-                  type: "error",
-                },
-              })
+              flashError(dispatch, "Image upload failed. Please try again shortly.")
             }
           })
       }
@@ -107,23 +76,10 @@ const createListingImgWidget = (
       preBatch: (cb, data) => {
         // Disallow upload of more than one file
         if (data.files.length > 1) {
-          dispatch({
-            type: "pushAlert",
-            alert: {
-              type: "error",
-              message: "You can only attach one image",
-            },
-          })
+          flashError(dispatch, "You can only attach one image")
           cb({ cancel: true })
         } else if (!session) {
-          dispatch({
-            type: "pushAlert",
-            alert: {
-              message:
-                "Image upload failed: You must be logged in to upload an image.",
-              type: "error",
-            },
-          })
+          flashError(dispatch, "Image upload failed: You must be logged in to upload an image.")
           cb({ cancel: true })
         } else {
           cb()
@@ -141,13 +97,7 @@ const createListingImgWidget = (
 const getProfileImgWidgetOpener = (widget, session, dispatch) => {
   return () => {
     if (!session) {
-      dispatch({
-        type: "pushAlert",
-        alert: {
-          message: "You must be logged in to upload an image.",
-          type: "error",
-        },
-      })
+      flashError(dispatch, "You must be logged in to upload an image.")
     } else {
       widget.open()
     }

@@ -10,7 +10,7 @@ import Input from "./shared/Input"
 import InputLabel from "./shared/InputLabel"
 import FormButtonGroup from "./shared/FormButtonGroup"
 import PageHeading from "./shared/PageHeading"
-import { goBack } from "../utils/Utils"
+import { flashError, flashNotice, goBack } from "../utils/Utils"
 
 const loginFailureMessages = {
   unauthorised: "Username or password incorrect",
@@ -33,13 +33,7 @@ const Login = () => {
   useEffect(() => {
     // Do nothing if user not logged in
     if (!session) return
-    dispatch({
-      type: "pushAlert",
-      alert: {
-        type: "error",
-        message: "You are already logged in",
-      },
-    })
+    flashError(dispatch, "You are already logged in")
     // Redirect back to last page or to home. Do not redirect to login or register pages to prevent infinite loop.
     goBack(backPath, history, ["/login", "/register"])
   }, [backPath, dispatch, history, session])
@@ -58,13 +52,7 @@ const Login = () => {
           session: { token: response.data.token, user: response.data.user },
         })
         // Flash alert for succcessful login
-        dispatch({
-          type: "pushAlert",
-          alert: {
-            type: "notice",
-            message: `You are now logged in as ${response.data.user.username}`,
-          },
-        })
+        flashNotice(dispatch, `You are now logged in as ${response.data.user.username}`)
         // Remove login failure message on successful login
         setLoginFailureMessage(null)
       })
