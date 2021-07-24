@@ -45,7 +45,7 @@ export default function stateReducer(currentState, action) {
     case "setBackPath": {
       return {
         ...currentState,
-        backPath: action.backPath
+        backPath: action.backPath,
       }
     }
 

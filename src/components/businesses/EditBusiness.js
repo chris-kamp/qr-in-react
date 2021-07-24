@@ -58,9 +58,13 @@ const EditBusiness = () => {
 
     // Send the data to Rails API
     axios
-      .patch(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`, {business: {...data.business, listing_img_src: listingImgSrc}}, {
-        headers: { Authorization: `Bearer ${session?.token}` },
-      })
+      .patch(
+        `${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`,
+        { business: { ...data.business, listing_img_src: listingImgSrc } },
+        {
+          headers: { Authorization: `Bearer ${session?.token}` },
+        }
+      )
       .then((response) => {
         console.debug(response)
 

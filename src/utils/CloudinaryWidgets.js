@@ -1,6 +1,11 @@
 import axios from "axios"
 
-const createProfileImgWidget = (window, dispatch, session, updateUserProfileImg) => {
+const createProfileImgWidget = (
+  window,
+  dispatch,
+  session,
+  updateUserProfileImg
+) => {
   return window.cloudinary.createUploadWidget(
     {
       cloudName: "chriskamp",
@@ -86,7 +91,12 @@ const createProfileImgWidget = (window, dispatch, session, updateUserProfileImg)
   )
 }
 
-const createListingImgWidget = (window, dispatch, session, setListingImgSrc) => {
+const createListingImgWidget = (
+  window,
+  dispatch,
+  session,
+  setListingImgSrc
+) => {
   return window.cloudinary.createUploadWidget(
     {
       cloudName: "chriskamp",
@@ -144,4 +154,8 @@ const getProfileImgWidgetOpener = (widget, session, dispatch) => {
   }
 }
 
-export { createProfileImgWidget, createListingImgWidget, getProfileImgWidgetOpener }
+export {
+  createProfileImgWidget,
+  createListingImgWidget,
+  getProfileImgWidgetOpener,
+}

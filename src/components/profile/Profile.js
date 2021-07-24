@@ -94,14 +94,18 @@ const Profile = () => {
           )}
         </Columns.Column>
       </Columns>
-      {isCurrentUser && (
-        <BusinessSection user={user} />
-      )}
+      {isCurrentUser && <BusinessSection user={user} />}
       <section>
         <Heading className="is-size-4 has-text-centered mt-4">
           Recent Checkins
         </Heading>
-        {user?.checkins ? <CheckinsSection checkins={user.checkins} /> : <p className="has-text-centered">This user hasn't checked in anywhere yet</p>}
+        {user?.checkins ? (
+          <CheckinsSection checkins={user.checkins} />
+        ) : (
+          <p className="has-text-centered">
+            This user hasn't checked in anywhere yet
+          </p>
+        )}
       </section>
     </Container>
   )

@@ -13,7 +13,11 @@ import { useParams } from "react-router-dom"
 
 const NewPromotion = () => {
   const { dispatch } = useContext(stateContext)
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
   const { id } = useParams()
 
   const history = useHistory()
@@ -24,22 +28,26 @@ const NewPromotion = () => {
       .post(`${process.env.REACT_APP_API_ENDPOINT}/promotions`, data)
       .then((response) => {
         dispatch({
-          type: 'pushAlert',
+          type: "pushAlert",
           alert: {
-            message: 'Promotion created successfully',
-            type: 'notice'
-          }
+            message: "Promotion created successfully",
+            type: "notice",
+          },
         })
 
         history.push(`/businesses/${response.data.business_id}`)
       })
       .catch((error) => {
         dispatch({
-          type: 'pushAlert',
+          type: "pushAlert",
           alert: {
-            message: 'Errors: ' + Object.keys(error.response.data.errors).map(k => `${k}: ${error.response.data.errors[k].join(', ')}`).join(', '),
-            type: 'error'
-          }
+            message:
+              "Errors: " +
+              Object.keys(error.response.data.errors)
+                .map((k) => `${k}: ${error.response.data.errors[k].join(", ")}`)
+                .join(", "),
+            type: "error",
+          },
         })
       })
   }
@@ -57,16 +65,14 @@ const NewPromotion = () => {
         form="newPromotionForm"
         focus
       />
-      {errors.promotion?.description && <ErrorText>Invalid promotion description</ErrorText>}
+      {errors.promotion?.description && (
+        <ErrorText>Invalid promotion description</ErrorText>
+      )}
 
       <InputLabel htmlFor="promotion.end_date" text="End date" />
-      <input
-        {...register('promotion.end_date')}
-        type="date"
-      />
+      <input {...register("promotion.end_date")} type="date" />
 
       <FormButtonGroup form="newPromotionForm" submitValue="Create promotion" />
-
     </FormContainer>
   )
 }

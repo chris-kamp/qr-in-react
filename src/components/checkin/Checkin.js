@@ -10,7 +10,6 @@ import ErrorText from "../shared/ErrorText"
 import FormContainer from "../shared/FormContainer"
 import { enforceLogin } from "../../utils/Utils"
 
-
 const Checkin = () => {
   const [business, setBusiness] = useState()
   const [checkinId, setCheckinId] = useState()

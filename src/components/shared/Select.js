@@ -1,4 +1,15 @@
-const Select = ({ register, name, options, optionKeyField, optionLabelField, validator, placeholder, type, form, focus }) => {
+const Select = ({
+  register,
+  name,
+  options,
+  optionKeyField,
+  optionLabelField,
+  validator,
+  placeholder,
+  type,
+  form,
+  focus,
+}) => {
   return (
     <select
       className="select is-medium is-rounded has-background-grey-lighter"
@@ -8,7 +19,11 @@ const Select = ({ register, name, options, optionKeyField, optionLabelField, val
       {...register(name, validator)}
       autoFocus={focus}
     >
-      {options.map(option => <option key={option[optionKeyField]} value={option[optionKeyField]}>{option[optionLabelField]}</option>)}
+      {options.map((option) => (
+        <option key={option[optionKeyField]} value={option[optionKeyField]}>
+          {option[optionLabelField]}
+        </option>
+      ))}
     </select>
   )
 }

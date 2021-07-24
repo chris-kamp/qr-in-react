@@ -65,8 +65,8 @@ const ReviewSection = ({ id, checkinId, business }) => {
             type: "pushAlert",
             alert: {
               type: "error",
-              message: "You must be logged in to leave a review"
-            }
+              message: "You must be logged in to leave a review",
+            },
           })
           // Display error messages - handles general errors not otherwise dealt with
         } else {

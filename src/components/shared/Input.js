@@ -1,4 +1,12 @@
-const Input = ({ register, name, validator, placeholder, type, form, focus }) => {
+const Input = ({
+  register,
+  name,
+  validator,
+  placeholder,
+  type,
+  form,
+  focus,
+}) => {
   return (
     <input
       className="input is-medium has-background-grey-lighter"

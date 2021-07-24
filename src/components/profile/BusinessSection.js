@@ -1,7 +1,7 @@
 import { Button } from "react-bulma-components"
 import { Link } from "react-router-dom"
 
-const BusinessSection = ({user}) => {
+const BusinessSection = ({ user }) => {
   return (
     <section className="is-flex">
       {user?.business ? (
