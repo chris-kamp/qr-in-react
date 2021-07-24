@@ -41,8 +41,8 @@ const Nav = () => {
   return (
     <Navbar className="is-light" active={dropdownActive}>
       <Navbar.Brand>
-        <Navbar.Item className="has-text-weight-bold">
-          <span className="is-size-4">QR-IN</span>
+        <Navbar.Item renderAs={Link} to="/" className="has-text-weight-bold">
+          QR-IN
         </Navbar.Item>
         <Navbar.Burger onClick={toggleDropdown} />
       </Navbar.Brand>
