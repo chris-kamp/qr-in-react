@@ -61,7 +61,19 @@ const Business = () => {
         })
         setIsOwnBusiness(response.data.user_id === session?.user.id)
       })
-  }, [id, session])
+      // Redirect to home and display flash message error if business loading fails
+      .catch(() => {
+        dispatch({
+          type: "pushAlert",
+          alert: {
+            type: "error",
+            message:
+              "Something went wrong. You may have tried to access a business listing that doesn't exist.",
+          },
+        })
+        history.push("/")
+      })
+  }, [id, session, dispatch, history])
 
   return (
     <Container>
