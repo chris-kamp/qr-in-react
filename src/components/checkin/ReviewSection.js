@@ -19,6 +19,7 @@ const ReviewSection = ({ id, checkinId, business }) => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm()
 
@@ -76,6 +77,7 @@ const ReviewSection = ({ id, checkinId, business }) => {
               value={rating}
               name="rating"
               onChange={(event, newValue) => {
+                setValue("rating", newValue)
                 setRating(newValue)
               }}
             />
