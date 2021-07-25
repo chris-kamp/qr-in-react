@@ -117,6 +117,14 @@ const EditBusiness = () => {
         })
         setListingImgSrc(response.data.listing_img_src)
       })
+      // Redirect to home and display flash message error if business loading fails
+      .catch(() => {
+        flashError(
+          dispatch,
+          "Something went wrong. You may have tried to access a listing that doesn't exist."
+        )
+        history.push("/")
+      })
   }, [dispatch, history, session, id, setValue])
 
   return (

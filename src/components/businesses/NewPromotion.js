@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
 import { useHistory } from "react-router"
 import axios from "axios"
 import { useForm } from "react-hook-form"
@@ -10,10 +10,10 @@ import ErrorText from "../shared/ErrorText"
 import FormButtonGroup from "../shared/FormButtonGroup"
 import TextArea from "../shared/TextArea"
 import { useParams } from "react-router-dom"
-import { flashError, flashNotice } from "../../utils/Utils"
+import { enforceLogin, flashError, flashNotice } from "../../utils/Utils"
 
 const NewPromotion = () => {
-  const { dispatch } = useContext(stateContext)
+  const { session, dispatch } = useContext(stateContext)
   const {
     register,
     handleSubmit,
@@ -22,6 +22,25 @@ const NewPromotion = () => {
   const { id } = useParams()
 
   const history = useHistory()
+
+  useEffect(() => {
+    enforceLogin(
+      "You must be logged in to create a promotion.",
+      session,
+      dispatch,
+      history
+    )
+    axios
+      .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
+      // Redirect to home and display flash message error if business does not exist or otherwise cannot be loaded
+      .catch(() => {
+        flashError(
+          dispatch,
+          "Something went wrong. You may have tried to access a listing that doesn't exist."
+        )
+        history.push("/")
+      })
+  }, [dispatch, history, session, id])
 
   const onSubmit = (data) => {
     data.promotion.business_id = id
