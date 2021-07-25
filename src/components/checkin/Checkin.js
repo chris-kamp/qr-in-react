@@ -8,7 +8,7 @@ import { stateContext } from "../../stateReducer"
 import ReviewSection from "./ReviewSection"
 import ErrorText from "../shared/ErrorText"
 import FormContainer from "../shared/FormContainer"
-import { enforceLogin, flashError } from "../../utils/Utils"
+import { enforceLogin, flashError, goBack } from "../../utils/Utils"
 
 const Checkin = () => {
   const [business, setBusiness] = useState()
@@ -16,12 +16,20 @@ const Checkin = () => {
   const [checkinFailureMessage, setCheckinFailureMessage] = useState()
   const { id } = useParams()
   const history = useHistory()
-  const { session, dispatch } = useContext(stateContext)
+  const { session, dispatch, backPath } = useContext(stateContext)
 
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
       .then((response) => {
+        if (response.data.user_id === session.user.id) {
+          flashError(
+            dispatch,
+            "You cannot check in at your own business."
+          )
+          goBack(backPath, history)
+          return  
+        }
         setBusiness(response.data)
       })
       .then(() => {
@@ -41,7 +49,7 @@ const Checkin = () => {
         )
         history.push("/")
       })
-  }, [dispatch, history, id, session])
+  }, [dispatch, history, id, session, backPath])
 
   const submitCheckIn = () => {
     // If not logged in, redirect to login page with flash error message, then return to prevent further action
@@ -77,7 +85,11 @@ const Checkin = () => {
         if (err.response?.status === 401) {
           history.push("/login")
           flashError(dispatch, "You must be logged in to check in")
-        } else {
+        } else if (err.response?.status === 403) {
+          goBack(backPath, history)
+          flashError(dispatch, "You cannot check in at your own business")
+        } 
+        else {
           // Display error messages - handles general errors not otherwise dealt with
           setCheckinFailureMessage(
             "Something went wrong. Please try again shortly."
