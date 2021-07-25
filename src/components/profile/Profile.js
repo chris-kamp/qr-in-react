@@ -24,21 +24,40 @@ const Profile = () => {
   const [user, setUser] = useState()
   const [editing, setEditing] = useState(false)
   const [isCurrentUser, setIsCurrentUser] = useState(false)
+  const [businessId, setBusinessId] = useState()
   const toggleForm = () => setEditing(!editing)
   const updateUserProfileImg = (new_img_src) => {
     setUser({ ...user, profile_img_src: new_img_src })
   }
 
+  // If accessing the profile of the currently logged in user, fetch their business id
   useEffect(() => {
-    setIsCurrentUser(session?.user.id.toString() === id)
-  }, [id, session])
+    const currentUser = session?.user.id.toString() === id
+    setIsCurrentUser(currentUser)
+    currentUser &&
+      axios
+        .get(`${process.env.REACT_APP_API_ENDPOINT}/users/${id}`, {
+          headers: {
+            Authorization: `Bearer ${session?.token}`,
+          },
+        })
+        .then((response) => {
+          setBusinessId(response.data.business?.id)
+        })
+        .catch((error) => {
+          flashError(
+            dispatch,
+            "Something went wrong while trying to load your business details. Please try again shortly"
+          )
+        })
+  }, [id, session, dispatch])
+
+  //
 
   // Fetch the user's public details
   useEffect(() => {
-    const currentUser = session?.user.id.toString() === id
-    const path = currentUser ? `users/${id}` : `users/${id}/public`
     axios
-      .get(`${process.env.REACT_APP_API_ENDPOINT}/${path}`, {
+      .get(`${process.env.REACT_APP_API_ENDPOINT}/users/${id}/public`, {
         headers: {
           Authorization: `Bearer ${session?.token}`,
         },
@@ -91,7 +110,7 @@ const Profile = () => {
           )}
         </Columns.Column>
       </Columns>
-      {isCurrentUser && <BusinessSection user={user} />}
+      {isCurrentUser && <BusinessSection {...{ businessId }} />}
       <section>
         <Heading className="is-size-4 has-text-centered mt-4">
           Recent Checkins
