@@ -9,37 +9,38 @@ import ReviewSection from "./ReviewSection"
 import ErrorText from "../shared/ErrorText"
 import FormContainer from "../shared/FormContainer"
 import { enforceLogin, flashError, goBack } from "../../utils/Utils"
+import LoadingWidget from "../shared/LoadingWidget"
 
 const Checkin = () => {
   const [business, setBusiness] = useState()
   const [checkinId, setCheckinId] = useState()
+  const [loaded, setLoaded] = useState(false)
   const [checkinFailureMessage, setCheckinFailureMessage] = useState()
   const { id } = useParams()
   const history = useHistory()
   const { session, dispatch, backPath } = useContext(stateContext)
 
   useEffect(() => {
+    // If not logged in, redirect to login page with flash error message
+    if (
+      enforceLogin(
+        "You must be logged in to check in",
+        session,
+        dispatch,
+        history
+      )
+    )
+      return
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
       .then((response) => {
         if (response.data.user_id === session?.user.id) {
-          flashError(
-            dispatch,
-            "You cannot check in at your own business."
-          )
+          flashError(dispatch, "You cannot check in at your own business.")
           goBack(backPath, history)
-          return  
+          return
         }
         setBusiness(response.data)
-      })
-      .then(() => {
-        // If not logged in, redirect to login page with flash error message
-        enforceLogin(
-          "You must be logged in to check in",
-          session,
-          dispatch,
-          history
-        )
+        setLoaded(true)
       })
       // Redirect to home and display flash message error if business loading fails
       .catch(() => {
@@ -88,8 +89,7 @@ const Checkin = () => {
         } else if (err.response?.status === 403) {
           goBack(backPath, history)
           flashError(dispatch, "You cannot check in at your own business")
-        } 
-        else {
+        } else {
           // Display error messages - handles general errors not otherwise dealt with
           setCheckinFailureMessage(
             "Something went wrong. Please try again shortly."
@@ -100,26 +100,32 @@ const Checkin = () => {
 
   return (
     <>
-      {business && (
-        <FormContainer>
-          <Heading className="has-text-centered mt-5">
-            Check in at
-            <br />
-            {business.name}
-          </Heading>
-          <CheckinButton {...{ checkinId, submitCheckIn }} />
-          {checkinFailureMessage && (
-            <ErrorText>Checkin failed: {checkinFailureMessage}</ErrorText>
+      {loaded ? (
+        <>
+          {business && (
+            <FormContainer>
+              <Heading className="has-text-centered mt-5">
+                Check in at
+                <br />
+                {business.name}
+              </Heading>
+              <CheckinButton {...{ checkinId, submitCheckIn }} />
+              {checkinFailureMessage && (
+                <ErrorText>Checkin failed: {checkinFailureMessage}</ErrorText>
+              )}
+              {checkinId && <ReviewSection {...{ id, checkinId, business }} />}
+              <ButtonWide
+                linkTo={`/businesses/${id}`}
+                bgColor="info-dark"
+                addClasses="mt-4"
+              >
+                Back to Listing
+              </ButtonWide>
+            </FormContainer>
           )}
-          {checkinId && <ReviewSection {...{ id, checkinId, business }} />}
-          <ButtonWide
-            linkTo={`/businesses/${id}`}
-            bgColor="info-dark"
-            addClasses="mt-4"
-          >
-            Back to Listing
-          </ButtonWide>
-        </FormContainer>
+        </>
+      ) : (
+        <LoadingWidget />
       )}
     </>
   )

@@ -16,6 +16,7 @@ import ProfileImg from "./ProfileImg"
 import CheckinsSection from "../checkin/CheckinsSection"
 import BusinessSection from "./BusinessSection"
 import { flashError } from "../../utils/Utils"
+import LoadingWidget from "../shared/LoadingWidget"
 
 const Profile = () => {
   const { session, dispatch } = useContext(stateContext)
@@ -25,6 +26,8 @@ const Profile = () => {
   const [editing, setEditing] = useState(false)
   const [isCurrentUser, setIsCurrentUser] = useState(false)
   const [businessId, setBusinessId] = useState()
+  const [loadedPublic, setLoadedPublic] = useState(false)
+  const [loadedPrivate, setLoadedPrivate] = useState(false)
   const toggleForm = () => setEditing(!editing)
   const updateUserProfileImg = (new_img_src) => {
     setUser({ ...user, profile_img_src: new_img_src })
@@ -34,7 +37,7 @@ const Profile = () => {
   useEffect(() => {
     const currentUser = session?.user.id.toString() === id
     setIsCurrentUser(currentUser)
-    currentUser &&
+    if (currentUser) {
       axios
         .get(`${process.env.REACT_APP_API_ENDPOINT}/users/${id}`, {
           headers: {
@@ -43,6 +46,7 @@ const Profile = () => {
         })
         .then((response) => {
           setBusinessId(response.data.business?.id)
+          setLoadedPrivate(true)
         })
         .catch((error) => {
           flashError(
@@ -50,6 +54,9 @@ const Profile = () => {
             "Something went wrong while trying to load your business details. Please try again shortly"
           )
         })
+    } else {
+      setLoadedPrivate(true)
+    }
   }, [id, session, dispatch])
 
   //
@@ -64,6 +71,7 @@ const Profile = () => {
       })
       .then((response) => {
         setUser(response.data)
+        setLoadedPublic(true)
       })
       // Redirect to home and display flash message error if user loading fails
       .catch(() => {
@@ -84,46 +92,54 @@ const Profile = () => {
   const showWidget = getProfileImgWidgetOpener(widget, session, dispatch)
 
   return (
-    <Container>
-      <PageHeading>{user?.username}</PageHeading>
-      <Columns className="is-vcentered">
-        <Columns.Column>
-          <figure style={{ maxWidth: "400px", margin: "0 auto" }}>
-            {user && <ProfileImg user={user} size={400} rounded />}
-          </figure>
-          {session?.user.id.toString() === id && (
-            <Button
-              className="button has-background-primary-dark has-text-white has-text-weight-bold mx-auto mt-2"
-              style={{ borderRadius: "0.6rem", display: "block" }}
-              onClick={showWidget}
-            >
-              Update Profile Picture
-            </Button>
-          )}
-        </Columns.Column>
-        <Columns.Column>
-          <Heading className="is-size-4 has-text-centered-mobile">Bio</Heading>
-          {editing ? (
-            <UserBioForm {...{ toggleForm, setUser, user }} />
-          ) : (
-            <UserBio {...{ user, toggleForm }} />
-          )}
-        </Columns.Column>
-      </Columns>
-      {isCurrentUser && <BusinessSection {...{ businessId }} />}
-      <section>
-        <Heading className="is-size-4 has-text-centered mt-4">
-          Recent Checkins
-        </Heading>
-        {user?.checkins ? (
-          <CheckinsSection checkins={user.checkins} />
-        ) : (
-          <p className="has-text-centered">
-            This user hasn't checked in anywhere yet
-          </p>
-        )}
-      </section>
-    </Container>
+    <>
+      {loadedPublic && loadedPrivate ? (
+        <Container>
+          <PageHeading>{user?.username}</PageHeading>
+          <Columns className="is-vcentered">
+            <Columns.Column>
+              <figure style={{ maxWidth: "400px", margin: "0 auto" }}>
+                {user && <ProfileImg user={user} size={400} rounded />}
+              </figure>
+              {session?.user.id.toString() === id && (
+                <Button
+                  className="button has-background-primary-dark has-text-white has-text-weight-bold mx-auto mt-2"
+                  style={{ borderRadius: "0.6rem", display: "block" }}
+                  onClick={showWidget}
+                >
+                  Update Profile Picture
+                </Button>
+              )}
+            </Columns.Column>
+            <Columns.Column>
+              <Heading className="is-size-4 has-text-centered-mobile">
+                Bio
+              </Heading>
+              {editing ? (
+                <UserBioForm {...{ toggleForm, setUser, user }} />
+              ) : (
+                <UserBio {...{ user, toggleForm }} />
+              )}
+            </Columns.Column>
+          </Columns>
+          {isCurrentUser && <BusinessSection {...{ businessId }} />}
+          <section>
+            <Heading className="is-size-4 has-text-centered mt-4">
+              Recent Checkins
+            </Heading>
+            {user?.checkins ? (
+              <CheckinsSection checkins={user.checkins} />
+            ) : (
+              <p className="has-text-centered">
+                This user hasn't checked in anywhere yet
+              </p>
+            )}
+          </section>
+        </Container>
+      ) : (
+        <LoadingWidget />
+      )}
+    </>
   )
 }
 

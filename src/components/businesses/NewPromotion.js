@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { useHistory } from "react-router"
 import axios from "axios"
 import { useForm } from "react-hook-form"
@@ -11,8 +11,10 @@ import FormButtonGroup from "../shared/FormButtonGroup"
 import TextArea from "../shared/TextArea"
 import { useParams } from "react-router-dom"
 import { enforceLogin, flashError, flashNotice } from "../../utils/Utils"
+import LoadingWidget from "../shared/LoadingWidget"
 
 const NewPromotion = () => {
+  const [loaded, setLoaded] = useState(false)
   const { session, dispatch } = useContext(stateContext)
   const {
     register,
@@ -42,7 +44,9 @@ const NewPromotion = () => {
             "You must be logged in as the business owner to create a promotion."
           )
           history.push("/")
+          return
         }
+        setLoaded(true)
       })
       // Redirect to home and display flash message error if business does not exist or otherwise cannot be loaded
       .catch(() => {
@@ -77,27 +81,40 @@ const NewPromotion = () => {
   }
 
   return (
-    <FormContainer>
-      <PageHeading>New Promotion</PageHeading>
-      <form onSubmit={handleSubmit(onSubmit)} id="newPromotionForm" />
-      <InputLabel htmlFor="promotion.description" text="Description" isFirst />
-      <TextArea
-        register={register}
-        name="promotion.description"
-        validator={{ required: true }}
-        placeholder="Enter the details of your promotion"
-        form="newPromotionForm"
-        focus
-      />
-      {errors.promotion?.description && (
-        <ErrorText>Invalid promotion description</ErrorText>
+    <>
+      {loaded ? (
+        <FormContainer>
+          <PageHeading>New Promotion</PageHeading>
+          <form onSubmit={handleSubmit(onSubmit)} id="newPromotionForm" />
+          <InputLabel
+            htmlFor="promotion.description"
+            text="Description"
+            isFirst
+          />
+          <TextArea
+            register={register}
+            name="promotion.description"
+            validator={{ required: true }}
+            placeholder="Enter the details of your promotion"
+            form="newPromotionForm"
+            focus
+          />
+          {errors.promotion?.description && (
+            <ErrorText>Invalid promotion description</ErrorText>
+          )}
+
+          <InputLabel htmlFor="promotion.end_date" text="End date" />
+          <input {...register("promotion.end_date")} type="date" />
+
+          <FormButtonGroup
+            form="newPromotionForm"
+            submitValue="Create promotion"
+          />
+        </FormContainer>
+      ) : (
+        <LoadingWidget />
       )}
-
-      <InputLabel htmlFor="promotion.end_date" text="End date" />
-      <input {...register("promotion.end_date")} type="date" />
-
-      <FormButtonGroup form="newPromotionForm" submitValue="Create promotion" />
-    </FormContainer>
+    </>
   )
 }
 
