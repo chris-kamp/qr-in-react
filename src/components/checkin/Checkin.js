@@ -22,7 +22,7 @@ const Checkin = () => {
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
       .then((response) => {
-        if (response.data.user_id === session.user.id) {
+        if (response.data.user_id === session?.user.id) {
           flashError(
             dispatch,
             "You cannot check in at your own business."

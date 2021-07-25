@@ -113,8 +113,8 @@ const Business = () => {
                           {promotion.description}
                           <br />
                           <b>
-                            Expires{" "}
-                            {new Date(promotion.end_date).toLocaleString()}
+                            Valid until{" "}
+                            {new Date(promotion.end_date).toLocaleDateString()}
                           </b>
                         </p>
                       )
