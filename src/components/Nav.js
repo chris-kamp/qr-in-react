@@ -10,18 +10,18 @@ const Nav = () => {
   const history = useHistory()
   const location = useLocation()
 
-    // On route change, push previous location to "backPath". Used to redirect back to previous location (only within the site) following certain actions.
-    useEffect(() => {
-      const unlisten = history.listen(() => {
-        dispatch({
-          type: "setBackPath",
-          backPath: location.pathname
-        })
-      });
-      return () => {
-        unlisten();
-      };
-    }, [history, location, dispatch]);
+  // On route change, push previous location to "backPath". Used to redirect back to previous location (only within the site) following certain actions.
+  useEffect(() => {
+    const unlisten = history.listen(() => {
+      dispatch({
+        type: "setBackPath",
+        backPath: location.pathname
+      })
+    })
+    return () => {
+      unlisten()
+    }
+  }, [history, location, dispatch])
 
   const logOut = () => {
     dispatch({
@@ -53,6 +53,9 @@ const Nav = () => {
           </Navbar.Item>
           <Navbar.Item renderAs={Link} to="/businesses">
             Browse
+          </Navbar.Item>
+          <Navbar.Item renderAs={Link} to="/promotions">
+            Promotions
           </Navbar.Item>
           {session && <Navbar.Item renderAs={Link} to={`/users/${session.user.id}`}>
             My Profile

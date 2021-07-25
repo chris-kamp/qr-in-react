@@ -12,7 +12,7 @@ import TextArea from "../shared/TextArea"
 import { useParams } from "react-router-dom"
 
 const NewPromotion = () => {
-  const { dispatch } = useContext(stateContext)
+  const { session, dispatch } = useContext(stateContext)
   const { register, handleSubmit, formState: { errors } } = useForm()
   const { id } = useParams()
 
@@ -21,7 +21,10 @@ const NewPromotion = () => {
   const onSubmit = (data) => {
     data.promotion.business_id = id
     axios
-      .post(`${process.env.REACT_APP_API_ENDPOINT}/promotions`, data)
+      .post(`${process.env.REACT_APP_API_ENDPOINT}/promotions`,
+        data,
+        { headers: { Authorization: `Bearer ${session?.token}` } }
+      )
       .then((response) => {
         dispatch({
           type: 'pushAlert',
@@ -61,9 +64,12 @@ const NewPromotion = () => {
 
       <InputLabel htmlFor="promotion.end_date" text="End date" />
       <input
-        {...register('promotion.end_date')}
+        {...register('promotion.end_date', { required: true })}
         type="date"
+        className="input is-medium has-background-grey-lighter"
+        style={{ borderRadius: "1rem" }}
       />
+      {errors.promotion?.end_date && <ErrorText>Invalid end date</ErrorText>}
 
       <FormButtonGroup form="newPromotionForm" submitValue="Create promotion" />
 

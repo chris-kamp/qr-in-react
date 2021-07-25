@@ -3,6 +3,7 @@ import axios from 'axios'
 import { Container, Heading, Columns } from 'react-bulma-components'
 import BusinessCard from './BusinessCard'
 import BusinessSearchFilter from './BusinessSearchFilter'
+import PageHeading from '../shared/PageHeading'
 
 const Businesses = () => {
   const [businesses, setBusinesses] = useState([])
@@ -16,7 +17,7 @@ const Businesses = () => {
 
   return (
     <Container>
-      <Heading className="has-text-centered">Browse Businesses</Heading>
+      <PageHeading>Browse Businesses</PageHeading>
       <BusinessSearchFilter searchCallback={(data) => { setBusinesses(data) }} />
       <Columns>
         {businesses.length > 0 ? businesses.map(business => (
