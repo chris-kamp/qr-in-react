@@ -26,6 +26,7 @@ const EditBusiness = () => {
   const [categories, setCategories] = useState([])
   const [failureMessage, setFailureMessage] = useState()
   const [listingImgSrc, setListingImgSrc] = useState()
+  const [businessData, setBusinessData] = useState()
   const [loadedCategories, setLoadedCategories] = useState(false)
   const [loadedBusiness, setLoadedBusiness] = useState(false)
   const history = useHistory()
@@ -121,7 +122,7 @@ const EditBusiness = () => {
           history.push("/")
           return
         }
-        setValue("business", {
+        setBusinessData({
           ...response.data,
           address: {
             street: response.data.address.street,
@@ -142,6 +143,13 @@ const EditBusiness = () => {
         history.push("/")
       })
   }, [dispatch, history, session, id, setValue])
+
+  useEffect(() => {
+    loadedCategories &&
+      loadedBusiness &&
+      businessData &&
+      setValue("business", businessData)
+  }, [businessData, setValue, loadedCategories, loadedBusiness])
 
   return (
     <>
