@@ -32,13 +32,16 @@ const NewPromotion = () => {
         history.push(`/businesses/${response.data.business_id}`)
       })
       .catch((error) => {
-        flashError(
-          dispatch,
-          "Errors: " +
-            Object.keys(error.response.data.errors)
-              .map((k) => `${k}: ${error.response.data.errors[k].join(", ")}`)
-              .join(", ")
-        )
+        // Display error messages - handles unauthorized, or other uncategorised error
+        error.response?.status === 401
+          ? flashError(
+              dispatch,
+              "You must be logged in as the business owner to create a promotion."
+            )
+          : flashError(
+              dispatch,
+              "Something went wrong when attempting to create the promotion. Please try again shortly."
+            )
       })
   }
 

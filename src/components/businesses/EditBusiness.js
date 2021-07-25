@@ -72,15 +72,23 @@ const EditBusiness = () => {
         // View the business with the ID returned from Rails
         history.push(`/businesses/${response.data.id}`)
       })
-      .catch((err) => {
-        // Display the errors to the user
-        flashError(dispatch, JSON.stringify(err.response.data))
+      .catch((error) => {
+        // Display error messages - handles unauthorized, or other uncategorised error
+        error.response?.status === 401
+          ? flashError(
+              dispatch,
+              "You must be logged in as the business owner to edit a business listing."
+            )
+          : flashError(
+              dispatch,
+              "Something went wrong when attempting to edit the listing. Please try again shortly."
+            )
       })
   }
 
   useEffect(() => {
     enforceLogin(
-      "You must be logged in to create a business.",
+      "You must be logged in to edit a business.",
       session,
       dispatch,
       history

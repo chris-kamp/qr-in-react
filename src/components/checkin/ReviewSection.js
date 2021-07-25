@@ -53,8 +53,7 @@ const ReviewSection = ({ id, checkinId, business }) => {
       })
       .catch((error) => {
         // If unauthorised, redirect user to login page
-        // TODO: Handle case where user might be logged in but unauthorised
-        if (error.response?.status === 401) {
+        if (error.response?.status === 401 )  {
           history.push("/login")
           flashError(dispatch, "You must be logged in to leave a review")
           // Display error messages - handles general errors not otherwise dealt with

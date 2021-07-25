@@ -74,7 +74,6 @@ const Checkin = () => {
       })
       .catch((err) => {
         // If unauthorised, redirect user to login page
-        // TODO: Handle case where user might be logged in but unauthorised
         if (err.response?.status === 401) {
           history.push("/login")
           flashError(dispatch, "You must be logged in to check in")
