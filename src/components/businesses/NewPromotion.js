@@ -24,14 +24,26 @@ const NewPromotion = () => {
   const history = useHistory()
 
   useEffect(() => {
-    enforceLogin(
-      "You must be logged in to create a promotion.",
-      session,
-      dispatch,
-      history
+    if (
+      enforceLogin(
+        "You must be logged in to create a promotion.",
+        session,
+        dispatch,
+        history
+      )
     )
+      return
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
+      .then((response) => {
+        if (response.data.user_id !== session.user.id) {
+          flashError(
+            dispatch,
+            "You must be logged in as the business owner to create a promotion."
+          )
+          history.push("/")
+        }
+      })
       // Redirect to home and display flash message error if business does not exist or otherwise cannot be loaded
       .catch(() => {
         flashError(

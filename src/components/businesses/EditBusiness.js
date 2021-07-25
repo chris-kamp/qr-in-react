@@ -87,12 +87,15 @@ const EditBusiness = () => {
   }
 
   useEffect(() => {
-    enforceLogin(
-      "You must be logged in to edit a business.",
-      session,
-      dispatch,
-      history
+    if (
+      enforceLogin(
+        "You must be logged in to edit a business.",
+        session,
+        dispatch,
+        history
+      )
     )
+      return
 
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/categories`)
@@ -106,6 +109,14 @@ const EditBusiness = () => {
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
       .then((response) => {
+        if (response.data.user_id !== session.user.id) {
+          flashError(
+            dispatch,
+            "You must be logged in as the business owner to edit a listing."
+          )
+          history.push("/")
+          return
+        }
         setValue("business", {
           ...response.data,
           address: {
