@@ -1,0 +1,85 @@
+[
+  {
+    "id": 1,
+    "category_id": 1,
+    "user_id": 1,
+    "name": "First business",
+    "description": "It's the first business",
+    "created_at": "2021-07-26T01:15:50.476Z",
+    "updated_at": "2021-07-26T01:15:50.476Z",
+    "listing_img_src": null,
+    "address": {
+      "street": "123 Coder Street",
+      "suburb": {
+        "name": "Brisbane City"
+      },
+      "postcode": {
+        "code": 4000
+      },
+      "state": {
+        "name": "Queensland"
+      }
+    },
+    "category": {
+      "name": "Bar"
+    },
+    "reviews": [
+      {
+        "id": 2,
+        "rating": "5.0",
+        "content": "Great",
+        "created_at": "2021-07-26T01:15:50.563Z",
+        "updated_at": "2021-07-26T01:15:50.563Z",
+        "checkin_id": 2
+      },
+      {
+        "id": 1,
+        "rating": "3.0",
+        "content": "Extremely average",
+        "created_at": "2021-07-26T01:15:50.545Z",
+        "updated_at": "2021-07-26T01:15:50.545Z",
+        "checkin_id": 1
+      }
+    ],
+    "checkins": [
+      {
+        "id": 3,
+        "business_id": 1,
+        "user_id": 2,
+        "created_at": "2021-07-26T01:15:50.568Z",
+        "updated_at": "2021-07-26T01:15:50.568Z",
+        "user": {
+          "username": "user2"
+        }
+      },
+      {
+        "id": 2,
+        "business_id": 1,
+        "user_id": 3,
+        "created_at": "2021-07-26T01:15:50.557Z",
+        "updated_at": "2021-07-26T01:15:50.557Z",
+        "user": {
+          "username": "user3"
+        },
+        "review": {
+          "rating": "5.0",
+          "content": "Great"
+        }
+      },
+      {
+        "id": 1,
+        "business_id": 1,
+        "user_id": 4,
+        "created_at": "2021-07-26T01:15:50.541Z",
+        "updated_at": "2021-07-26T01:15:50.541Z",
+        "user": {
+          "username": "user4"
+        },
+        "review": {
+          "rating": "3.0",
+          "content": "Extremely average"
+        }
+      }
+    ]
+  }
+]
