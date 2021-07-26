@@ -1,7 +1,7 @@
 import { Card, Table } from "react-bulma-components"
 import CheckinCard from "./CheckinCard"
 
-const CheckinsSection = ({checkins}) => {
+const CheckinsSection = ({ checkins }) => {
   return (
     <>
       {checkins.length > 0 ? (

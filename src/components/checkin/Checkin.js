@@ -6,47 +6,51 @@ import ButtonWide from "../shared/ButtonWide"
 import CheckinButton from "./CheckinButton"
 import { stateContext } from "../../stateReducer"
 import ReviewSection from "./ReviewSection"
-import { ErrorText } from "../../styled-components/FormStyledComponents"
+import ErrorText from "../shared/ErrorText"
 import FormContainer from "../shared/FormContainer"
-import { enforceLogin } from "../../utils/Utils"
-
+import { enforceLogin, flashError, goBack } from "../../utils/Utils"
+import LoadingWidget from "../shared/LoadingWidget"
 
 const Checkin = () => {
   const [business, setBusiness] = useState()
   const [checkinId, setCheckinId] = useState()
+  const [loaded, setLoaded] = useState(false)
   const [checkinFailureMessage, setCheckinFailureMessage] = useState()
   const { id } = useParams()
   const history = useHistory()
-  const { session, dispatch } = useContext(stateContext)
+  const { session, dispatch, backPath } = useContext(stateContext)
 
   useEffect(() => {
+    // If not logged in, redirect to login page with flash error message
+    if (
+      enforceLogin(
+        "You must be logged in to check in",
+        session,
+        dispatch,
+        history
+      )
+    )
+      return
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
       .then((response) => {
+        if (response.data.user_id === session?.user.id) {
+          flashError(dispatch, "You cannot check in at your own business.")
+          goBack(backPath, history)
+          return
+        }
         setBusiness(response.data)
-      })
-      .then(() => {
-        // If not logged in, redirect to login page with flash error message
-        enforceLogin(
-          "You must be logged in to check in",
-          session,
-          dispatch,
-          history
-        )
+        setLoaded(true)
       })
       // Redirect to home and display flash message error if business loading fails
       .catch(() => {
-        dispatch({
-          type: "pushAlert",
-          alert: {
-            type: "error",
-            message:
-              "Something went wrong. You may have tried to access a checkin page that doesn't exist.",
-          },
-        })
+        flashError(
+          dispatch,
+          "Something went wrong. You may have tried to access a checkin page that doesn't exist."
+        )
         history.push("/")
       })
-  }, [dispatch, history, id, session])
+  }, [dispatch, history, id, session, backPath])
 
   const submitCheckIn = () => {
     // If not logged in, redirect to login page with flash error message, then return to prevent further action
@@ -79,16 +83,12 @@ const Checkin = () => {
       })
       .catch((err) => {
         // If unauthorised, redirect user to login page
-        // TODO: Handle case where user might be logged in but unauthorised
         if (err.response?.status === 401) {
           history.push("/login")
-          dispatch({
-            type: "pushAlert",
-            alert: {
-              type: "error",
-              message: "You must be logged in to check in",
-            },
-          })
+          flashError(dispatch, "You must be logged in to check in")
+        } else if (err.response?.status === 403) {
+          goBack(backPath, history)
+          flashError(dispatch, "You cannot check in at your own business")
         } else {
           // Display error messages - handles general errors not otherwise dealt with
           setCheckinFailureMessage(
@@ -100,26 +100,32 @@ const Checkin = () => {
 
   return (
     <>
-      {business && (
-        <FormContainer>
-          <Heading className="has-text-centered mt-5">
-            Check in at
-            <br />
-            {business.name}
-          </Heading>
-          <CheckinButton {...{ checkinId, submitCheckIn }} />
-          {checkinFailureMessage && (
-            <ErrorText>Checkin failed: {checkinFailureMessage}</ErrorText>
+      {loaded ? (
+        <>
+          {business && (
+            <FormContainer>
+              <Heading className="has-text-centered mt-5">
+                Check in at
+                <br />
+                {business.name}
+              </Heading>
+              <CheckinButton {...{ checkinId, submitCheckIn }} />
+              {checkinFailureMessage && (
+                <ErrorText>Checkin failed: {checkinFailureMessage}</ErrorText>
+              )}
+              {checkinId && <ReviewSection {...{ id, checkinId, business }} />}
+              <ButtonWide
+                linkTo={`/businesses/${id}`}
+                bgColor="info-dark"
+                addClasses="mt-4"
+              >
+                Back to Listing
+              </ButtonWide>
+            </FormContainer>
           )}
-          {checkinId && <ReviewSection {...{ id, checkinId, business }} />}
-          <ButtonWide
-            linkTo={`/businesses/${id}`}
-            bgColor="info-dark"
-            addClasses="mt-4"
-          >
-            Back to Listing
-          </ButtonWide>
-        </FormContainer>
+        </>
+      ) : (
+        <LoadingWidget />
       )}
     </>
   )

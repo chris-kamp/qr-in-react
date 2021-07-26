@@ -1,28 +1,27 @@
 import React, { useContext, useEffect, useState } from "react"
 import axios from "axios"
 import { Container, Columns } from "react-bulma-components"
-import BusinessSearchFilter from "./BusinessSearchFilter"
+import PageHeading from "../shared/PageHeading"
 import { flashError } from "../../utils/Utils"
 import { stateContext } from "../../stateReducer"
 import LoadingWidget from "../shared/LoadingWidget"
-import PageHeading from "../shared/PageHeading"
-import BusinessCardsSection from "./BusinessCardsSection"
+import PromotionCardsSection from "./PromotionCardsSection"
 
-const Businesses = () => {
-  const [businesses, setBusinesses] = useState([])
+const Promotions = () => {
+  const [promotions, setPromotions] = useState([])
   const [loaded, setLoaded] = useState(false)
   const { dispatch } = useContext(stateContext)
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses`)
+      .get(`${process.env.REACT_APP_API_ENDPOINT}/promotions`)
       .then((response) => {
-        setBusinesses(response.data)
+        setPromotions(response.data)
         setLoaded(true)
       })
       .catch(() => {
         flashError(
           dispatch,
-          "Something went wrong while trying to access the list of businesses. Please try again shortly."
+          "Something went wrong while trying to access the list of promotions. Please try again shortly."
         )
       })
   }, [dispatch])
@@ -31,17 +30,10 @@ const Businesses = () => {
     <>
       {loaded ? (
         <Container>
-          <PageHeading className="has-text-centered">
-            Browse Businesses
-          </PageHeading>
-          <BusinessSearchFilter
-            searchCallback={(data) => {
-              setBusinesses(data)
-            }}
-          />
+          <PageHeading>Browse Promotions</PageHeading>
           <Columns>
-            <BusinessCardsSection
-              {...{ businesses }}
+            <PromotionCardsSection
+              {...{ promotions }}
               desktopSize="half"
               tabletSize="full"
               mobileSize="full"
@@ -55,4 +47,4 @@ const Businesses = () => {
   )
 }
 
-export default Businesses
+export default Promotions

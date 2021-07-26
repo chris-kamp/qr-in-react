@@ -2,6 +2,7 @@ import { Navbar, Button } from "react-bulma-components"
 import { Link, useHistory, useLocation } from "react-router-dom"
 import { useState, useContext, useEffect } from "react"
 import { stateContext } from "../stateReducer"
+import { flashNotice } from "../utils/Utils"
 
 const Nav = () => {
   const [dropdownActive, setDropdownActive] = useState(false)
@@ -10,39 +11,33 @@ const Nav = () => {
   const history = useHistory()
   const location = useLocation()
 
-    // On route change, push previous location to "backPath". Used to redirect back to previous location (only within the site) following certain actions.
-    useEffect(() => {
-      const unlisten = history.listen(() => {
-        dispatch({
-          type: "setBackPath",
-          backPath: location.pathname
-        })
-      });
-      return () => {
-        unlisten();
-      };
-    }, [history, location, dispatch]);
+  // On route change, push previous location to "backPath". Used to redirect back to previous location (only within the site) following certain actions.
+  useEffect(() => {
+    const unlisten = history.listen(() => {
+      dispatch({
+        type: "setBackPath",
+        backPath: location.pathname,
+      })
+    })
+    return () => {
+      unlisten()
+    }
+  }, [history, location, dispatch])
 
   const logOut = () => {
     dispatch({
       type: "logout",
     })
     // On logout, redirect to home and notify user of successful logout
-    dispatch({
-      type: "pushAlert",
-      alert: {
-        type: "notice",
-        message: `Logged out successfully`,
-      },
-    })
+    flashNotice(dispatch, "Logged out successfully")
     history.push("/")
   }
 
   return (
     <Navbar className="is-light" active={dropdownActive}>
       <Navbar.Brand>
-        <Navbar.Item className="has-text-weight-bold">
-          <span className="is-size-4">QR-IN</span>
+        <Navbar.Item renderAs={Link} to="/" className="has-text-weight-bold">
+          QR-IN
         </Navbar.Item>
         <Navbar.Burger onClick={toggleDropdown} />
       </Navbar.Brand>
@@ -54,9 +49,14 @@ const Nav = () => {
           <Navbar.Item renderAs={Link} to="/businesses">
             Browse
           </Navbar.Item>
-          {session && <Navbar.Item renderAs={Link} to={`/users/${session.user.id}`}>
-            My Profile
-          </Navbar.Item>}
+          <Navbar.Item renderAs={Link} to="/promotions">
+            Promotions
+          </Navbar.Item>
+          {session && (
+            <Navbar.Item renderAs={Link} to={`/users/${session.user.id}`}>
+              My Profile
+            </Navbar.Item>
+          )}
         </Navbar.Container>
         <Navbar.Container align="end" className="is-flex">
           {session && (
