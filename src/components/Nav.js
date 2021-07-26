@@ -49,6 +49,9 @@ const Nav = () => {
           <Navbar.Item renderAs={Link} to="/businesses">
             Browse
           </Navbar.Item>
+          <Navbar.Item renderAs={Link} to="/promotions">
+            Promotions
+          </Navbar.Item>
           {session && (
             <Navbar.Item renderAs={Link} to={`/users/${session.user.id}`}>
               My Profile

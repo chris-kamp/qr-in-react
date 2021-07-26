@@ -55,14 +55,11 @@ const NewBusiness = () => {
       history
     )
 
-    // Get the user id from the current session
-    data.business.user_id = session.user.id
-
     // Send the data to Rails API
     axios
       .post(
         `${process.env.REACT_APP_API_ENDPOINT}/businesses`,
-        { business: { ...data.business, listing_img_src: listingImgSrc } },
+        { business: { ...data.business, user_id: session.user.id, listing_img_src: listingImgSrc } },
         {
           headers: { Authorization: `Bearer ${session?.token}` },
         }

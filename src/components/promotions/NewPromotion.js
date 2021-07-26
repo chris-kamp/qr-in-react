@@ -61,7 +61,10 @@ const NewPromotion = () => {
   const onSubmit = (data) => {
     data.promotion.business_id = id
     axios
-      .post(`${process.env.REACT_APP_API_ENDPOINT}/promotions`, data)
+      .post(`${process.env.REACT_APP_API_ENDPOINT}/promotions`,
+        data,
+        { headers: { Authorization: `Bearer ${session?.token}` } }
+      )
       .then((response) => {
         flashNotice(dispatch, "Promotion created successfully")
         history.push(`/businesses/${response.data.business_id}`)
