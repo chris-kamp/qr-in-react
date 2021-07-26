@@ -65,7 +65,6 @@ const NewBusiness = () => {
         }
       )
       .then((response) => {
-        console.debug(response)
         flashNotice(dispatch, "Business created successfully")
         setFailureMessage(null)
         // View the business with the ID returned from Rails

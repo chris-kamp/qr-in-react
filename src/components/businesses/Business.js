@@ -34,8 +34,11 @@ const Business = () => {
         flashNotice(dispatch, "Business deleted")
         history.push("/businesses")
       })
-      .catch((err) => {
-        console.error(err)
+      .catch(() => {
+        flashError(
+          dispatch,
+          "Something went wrong while attempting to delete the listing. Please try again shortly."
+        )
       })
   }
   useEffect(() => {

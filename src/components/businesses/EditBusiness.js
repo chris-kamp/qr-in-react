@@ -70,7 +70,6 @@ const EditBusiness = () => {
         }
       )
       .then((response) => {
-        console.debug(response)
         flashNotice(dispatch, "Business updated successfully")
         setFailureMessage(null)
         // View the business with the ID returned from Rails
