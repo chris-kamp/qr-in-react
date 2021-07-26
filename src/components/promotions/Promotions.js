@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react"
 import axios from "axios"
-import { Container, Heading, Columns } from "react-bulma-components"
-import PromotionCard from "./PromotionCard"
+import { Container, Columns } from "react-bulma-components"
 import PageHeading from "../shared/PageHeading"
 import { flashError } from "../../utils/Utils"
 import { stateContext } from "../../stateReducer"
 import LoadingWidget from "../shared/LoadingWidget"
+import PromotionCardsSection from "./PromotionCardsSection"
 
 const Promotions = () => {
   const [promotions, setPromotions] = useState([])
@@ -32,25 +32,12 @@ const Promotions = () => {
         <Container>
           <PageHeading>Browse Promotions</PageHeading>
           <Columns>
-            {promotions.length > 0 ? (
-              promotions.map((promotion) => (
-                <Columns.Column
-                  desktop={{ size: "half" }}
-                  tablet={{ size: "full" }}
-                  key={promotion.id}
-                >
-                  <PromotionCard
-                    key={promotion.id}
-                    promotion={promotion}
-                    business={promotion.business}
-                  ></PromotionCard>
-                </Columns.Column>
-              ))
-            ) : (
-              <Columns.Column size={"full"}>
-                <Heading size={4}>No Promotions Found</Heading>
-              </Columns.Column>
-            )}
+            <PromotionCardsSection
+              {...{ promotions }}
+              desktopSize="half"
+              tabletSize="full"
+              mobileSize="full"
+            />
           </Columns>
         </Container>
       ) : (

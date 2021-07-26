@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from "react"
 import axios from "axios"
-import { Container, Heading, Columns } from "react-bulma-components"
-import BusinessCard from "./BusinessCard"
+import { Container, Columns } from "react-bulma-components"
 import BusinessSearchFilter from "./BusinessSearchFilter"
 import { flashError } from "../../utils/Utils"
 import { stateContext } from "../../stateReducer"
 import LoadingWidget from "../shared/LoadingWidget"
 import PageHeading from "../shared/PageHeading"
+import BusinessCardsSection from "./BusinessCardsSection"
 
 const Businesses = () => {
   const [businesses, setBusinesses] = useState([])
@@ -31,31 +31,21 @@ const Businesses = () => {
     <>
       {loaded ? (
         <Container>
-          <PageHeading className="has-text-centered">Browse Businesses</PageHeading>
+          <PageHeading className="has-text-centered">
+            Browse Businesses
+          </PageHeading>
           <BusinessSearchFilter
             searchCallback={(data) => {
               setBusinesses(data)
             }}
           />
           <Columns>
-            {businesses.length > 0 ? (
-              businesses.map((business) => (
-                <Columns.Column
-                  desktop={{ size: "half" }}
-                  tablet={{ size: "full" }}
-                  key={business.id}
-                >
-                  <BusinessCard
-                    key={business.id}
-                    business={business}
-                  ></BusinessCard>
-                </Columns.Column>
-              ))
-            ) : (
-              <Columns.Column size={"full"}>
-                <Heading size={4}>No Businesses Found</Heading>
-              </Columns.Column>
-            )}
+            <BusinessCardsSection
+              {...{ businesses }}
+              desktopSize="half"
+              tabletSize="full"
+              mobileSize="full"
+            />
           </Columns>
         </Container>
       ) : (

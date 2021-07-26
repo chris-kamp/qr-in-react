@@ -1,15 +1,20 @@
 import axios from "axios"
 import { useContext, useEffect, useState } from "react"
-import { Columns, Container, Heading, Image } from "react-bulma-components"
+import { Columns, Container, Heading } from "react-bulma-components"
 import { stateContext } from "../../stateReducer"
 import { flashError } from "../../utils/Utils"
-import BusinessCard from "../businesses/BusinessCard"
+import BusinessCardsSection from "../businesses/BusinessCardsSection"
 import CheckinsSection from "../checkin/CheckinsSection"
-import PromotionCard from "../promotions/PromotionCard"
+import PromotionCardsSection from "../promotions/PromotionCardsSection"
+import LoadingWidget from "../shared/LoadingWidget"
 import PageHeading from "../shared/PageHeading"
 
 const Home = () => {
   const [checkins, setCheckins] = useState([])
+  const [checkinsLoaded, setCheckinsLoaded] = useState(false)
+  const [businessesLoaded, setBusinessesLoaded] = useState(false)
+  const [promotionsLoaded, setPromotionsLoaded] = useState(false)
+  const [allLoaded, setAllLoaded] = useState(false)
   const [businesses, setBusinesses] = useState([])
   const [promotions, setPromotions] = useState([])
   const { dispatch } = useContext(stateContext)
@@ -24,6 +29,7 @@ const Home = () => {
       })
       .then((response) => {
         setCheckins(response.data)
+        setCheckinsLoaded(true)
       })
       .catch(() => {
         flashError(
@@ -43,6 +49,7 @@ const Home = () => {
       })
       .then((response) => {
         setBusinesses(response.data)
+        setBusinessesLoaded(true)
       })
       .catch(() => {
         flashError(
@@ -62,16 +69,23 @@ const Home = () => {
       })
       .then((response) => {
         setPromotions(response.data)
+        setPromotionsLoaded(true)
       })
       .catch(() => {
         flashError(
           dispatch,
-          "Something went wrong while trying to access the list of promotions. Please try again shortly."
+          "Something went wrong while trying to access the list of checkins. Please try again shortly."
         )
       })
   }, [dispatch])
 
+  useEffect(() => {
+    setAllLoaded(businessesLoaded && promotionsLoaded && checkinsLoaded)
+  }, [businessesLoaded, promotionsLoaded, checkinsLoaded])
+
   return (
+    <>
+    {allLoaded ? (
     <Container>
       <PageHeading>Home</PageHeading>
       <Columns>
@@ -80,25 +94,7 @@ const Home = () => {
             Popular Businesses
           </Heading>
         </Columns.Column>
-        {businesses.length > 0 ? (
-          businesses.map((business) => (
-            <Columns.Column
-              desktop={{ size: "one-quarter" }}
-              tablet={{ size: "half" }}
-              mobile={{ size: "full" }}
-              key={business.id}
-            >
-              <BusinessCard
-                key={business.id}
-                business={business}
-              ></BusinessCard>
-            </Columns.Column>
-          ))
-        ) : (
-          <Columns.Column size={"full"}>
-            <Heading size={4}>No Businesses Found</Heading>
-          </Columns.Column>
-        )}
+        <BusinessCardsSection {...{businesses}} desktopSize="one-quarter" tabletSize="half" mobileSize="full" />
       </Columns>
       <Columns>
         <Columns.Column size="full">
@@ -106,33 +102,17 @@ const Home = () => {
             Current Promotions
           </Heading>
         </Columns.Column>
-        {promotions.length > 0 ? (
-          promotions.map((promotion) => (
-            <Columns.Column
-              desktop={{ size: "one-quarter" }}
-              tablet={{ size: "half" }}
-              mobile={{ size: "full" }}
-              key={promotion.id}
-            >
-              <PromotionCard
-                key={promotion.id}
-                promotion={promotion}
-                business={promotion.business}
-              ></PromotionCard>
-            </Columns.Column>
-          ))
-        ) : (
-          <Columns.Column size={"full"}>
-            <Heading size={4}>No Promotions Found</Heading>
-          </Columns.Column>
-        )}
+        <PromotionCardsSection {...{promotions}} desktopSize="one-quarter" tabletSize="half" mobileSize="full" />
       </Columns>
       <Heading size={4} className="has-text-centered">
         Recent Checkins
       </Heading>
       <CheckinsSection {...{ checkins }} />
     </Container>
-  )
+  ): (
+    <LoadingWidget />
+  )}
+</>)
 }
 
 export default Home
