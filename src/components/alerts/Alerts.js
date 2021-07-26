@@ -6,7 +6,7 @@ const Alerts = () => {
   const { alerts } = useContext(stateContext)
   return (
     <>
-      {alerts.map(alert => (
+      {alerts.map((alert) => (
         <Alert {...alert} key={alert.id} />
       ))}
     </>

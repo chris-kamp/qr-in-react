@@ -20,7 +20,7 @@ function App() {
   const [store, dispatch] = useReducer(stateReducer, {
     session: JSON.parse(localStorage.getItem("session")),
     alerts: [],
-    backPath: ""
+    backPath: "",
   })
 
   return (

@@ -4,6 +4,7 @@ import { useContext } from "react"
 import { stateContext } from "../../stateReducer"
 import TextArea from "../shared/TextArea"
 import InlineFormButtonGroup from "../shared/InlineFormButtonGroup"
+import { flashError, flashNotice } from "../../utils/Utils"
 
 const UserBioForm = ({ toggleForm, setUser, user }) => {
   const { session, dispatch } = useContext(stateContext)
@@ -23,25 +24,12 @@ const UserBioForm = ({ toggleForm, setUser, user }) => {
         }
       )
       .then((response) => {
-        dispatch({
-          type: "pushAlert",
-          alert: {
-            type: "notice",
-            message: "Bio successfully updated",
-          },
-        })
+        flashNotice(dispatch, "Bio successfully updated")
         setUser(response.data)
         toggleForm()
       })
       .catch(() => {
-        dispatch({
-          type: "pushAlert",
-          alert: {
-            type: "error",
-            message:
-              "Something went wrong while trying to update your bio. Please try again shortly.",
-          },
-        })
+        flashError(dispatch, "Something went wrong while trying to update your bio. Please try again shortly.")
       })
   }
 

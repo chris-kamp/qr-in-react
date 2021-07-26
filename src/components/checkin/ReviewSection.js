@@ -5,10 +5,10 @@ import { useHistory } from "react-router"
 import { stateContext } from "../../stateReducer"
 import axios from "axios"
 import { reviewContentValidator } from "../../utils/Validators"
-import { ErrorText } from "../../styled-components/FormStyledComponents"
+import ErrorText from "../shared/ErrorText"
 import TextArea from "../shared/TextArea"
 import { Rating } from "@material-ui/lab"
-import { enforceLogin } from "../../utils/Utils"
+import { enforceLogin, flashError, flashNotice } from "../../utils/Utils"
 
 const ReviewSection = ({ id, checkinId, business }) => {
   const [submissionFailureMessage, setSubmissionFailureMessage] = useState()
@@ -19,6 +19,7 @@ const ReviewSection = ({ id, checkinId, business }) => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm()
 
@@ -48,26 +49,13 @@ const ReviewSection = ({ id, checkinId, business }) => {
         setSubmissionFailureMessage(null)
         // Redirect to business listing
         history.push(`/businesses/${id}`)
-        dispatch({
-          type: "pushAlert",
-          alert: {
-            type: "notice",
-            message: `Your review of ${business.name} has been posted!`,
-          },
-        })
+        flashNotice(dispatch, `Your review of ${business.name} has been posted!`)
       })
       .catch((error) => {
         // If unauthorised, redirect user to login page
-        // TODO: Handle case where user might be logged in but unauthorised
-        if (error.response?.status === 401) {
+        if (error.response?.status === 401 )  {
           history.push("/login")
-          dispatch({
-            type: "pushAlert",
-            alert: {
-              type: "error",
-              message: "You must be logged in to leave a review"
-            }
-          })
+          flashError(dispatch, "You must be logged in to leave a review")
           // Display error messages - handles general errors not otherwise dealt with
         } else {
           setSubmissionFailureMessage(
@@ -88,6 +76,7 @@ const ReviewSection = ({ id, checkinId, business }) => {
               value={rating}
               name="rating"
               onChange={(event, newValue) => {
+                setValue("rating", newValue)
                 setRating(newValue)
               }}
             />

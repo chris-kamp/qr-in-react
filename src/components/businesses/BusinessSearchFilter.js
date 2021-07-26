@@ -37,7 +37,7 @@ const BusinessSearchFilter = (props) => {
                 type="text"
                 id="search"
                 className="input"
-                placeholder="Type a business name or location"
+                placeholder="Search businesses by name or description"
               />
             </div>
             <div className="control">
