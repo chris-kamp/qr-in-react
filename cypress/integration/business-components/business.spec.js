@@ -1,10 +1,8 @@
 describe('Businesses', () => {
     it('Loads the index and displays the businesses', () => {
-        cy.fixture('businesses-index').then((businessesJson) => {
-            cy.intercept(`${Cypress.env('apiUrl')}/businesses`, {
-                statusCode: 200,
-                body: businessesJson
-            })
+        cy.intercept(`${Cypress.env('apiUrl')}/businesses`, {
+            statusCode: 200,
+            fixture: 'businesses-index'
         })
 
         cy.visit(`${Cypress.env('siteUrl')}/businesses`)
@@ -18,11 +16,9 @@ describe('Businesses', () => {
     })
 
     it('Searches businesses and displays the correct results', () => {
-        cy.fixture('business-search-name').then((businessesJson) => {
-            cy.intercept(`${Cypress.env('apiUrl')}/businesses/search*`, {
-                statusCode: 200,
-                body: businessesJson
-            })
+        cy.intercept(`${Cypress.env('apiUrl')}/businesses/search*`, {
+            statusCode: 200,
+            fixture: 'business-search-name'
         })
         cy.get('#search').type('Second{enter}')
 
@@ -30,33 +26,29 @@ describe('Businesses', () => {
     })
 
     it('Uses checkboxes to filter the search', () => {
-        cy.fixture('categories-index').then((categoriesJson) => {
-            cy.intercept(`${Cypress.env('apiUrl')}/categories`, {
-                statusCode: 200,
-                body: categoriesJson
-            })
+        cy.intercept(`${Cypress.env('apiUrl')}/categories`, {
+            statusCode: 200,
+            fixture: 'categories-index'
         })
 
-        cy.fixture('business-search-filter').then((businessesJson) => {
-            cy.intercept(`${Cypress.env('apiUrl')}/businesses/search*`, {
-                statusCode: 200,
-                body: businessesJson
-            })
-            cy.get('.is-pulled-right > :nth-child(4) > .checkbox').click()
-            cy.get(':nth-child(2) > .is-primary').click()
-            cy.get('.card > :nth-child(3)').should('have.text', "It's the first business...")
+        cy.intercept(`${Cypress.env('apiUrl')}/businesses/search*`, {
+            statusCode: 200,
+            fixture: 'business-search-filter'
         })
+
+        cy.get('.is-pulled-right > :nth-child(4) > .checkbox').click()
+        cy.get(':nth-child(2) > .is-primary').click()
+        cy.get('.card > :nth-child(3)').should('have.text', "It's the first business...")
     })
 })
 
 describe('Business', () => {
     it('Views an individual business', () => {
-        cy.fixture('business-show').then((businessJson) => {
-            cy.intercept(`${Cypress.env('apiUrl')}/businesses/1`, {
-                statusCode: 200,
-                body: businessJson
-            })
+        cy.intercept(`${Cypress.env('apiUrl')}/businesses/1`, {
+            statusCode: 200,
+            fixture: 'business-show'
         })
+
         cy.get('a > .is-pulled-right').click()
 
         cy.get('#root > :nth-child(2) > :nth-child(1)').should('have.text', 'First business')
@@ -97,53 +89,58 @@ describe('Business', () => {
     })
 })
 
-describe('Business Owner', () => {
-    it('Login as user', () => {
+describe('Business owner', () => {
+    it('Login as user and loads the homepage', () => {
+        cy.intercept('POST', `${Cypress.env('apiUrl')}/users/login`, {
+            statusCode: 200,
+            fixture: 'user-login'
+        })
+
+        cy.intercept(`${Cypress.env('apiUrl')}/businesses?limit=4`, {
+            statusCode: 200,
+            fixture: 'home-businesses'
+        })
+        cy.intercept(`${Cypress.env('apiUrl')}/promotions?limit=4`, {
+            statusCode: 200,
+            fixture: 'home-promotions'
+        })
+        cy.intercept(`${Cypress.env('apiUrl')}/checkins?limit=10`, {
+            statusCode: 200,
+            fixture: 'home-checkins'
+        })
+
         cy.visit(`${Cypress.env('siteUrl')}/login`)
 
         cy.get('[placeholder="email@example.com"]').type('user4@user4.com')
         cy.get('[placeholder="Password"]').type('Password1')
 
-        cy.fixture('user-login').then((userLoginJson) => {
-            cy.intercept('POST', `${Cypress.env('apiUrl')}/users/login`, {
-                statusCode: 200,
-                body: userLoginJson
-            })
+        cy.get('.has-background-primary-dark').click()
 
-            cy.get('.has-background-primary-dark').click()
-        })
+        cy.get(':nth-child(2) > .message-header > .delete').click()
     })
 
-    it('Creates a business from Profile page', () => {
-        cy.fixture('user-show').then((userJson) => {
-            cy.intercept(`${Cypress.env('apiUrl')}/users/4`, {
-                statusCode: 200,
-                body: userJson
-            })
-            cy.intercept(`${Cypress.env('apiUrl')}/users/4/public`, {
-                statusCode: 200,
-                body: userJson
-            })
-
-            cy.get('[href="/users/4"]').click()
+    it('Creates a business, navigating from profile page', () => {
+        cy.intercept(`${Cypress.env('apiUrl')}/users/4`, {
+            statusCode: 200,
+            fixture: 'user-show'
+        })
+        cy.intercept(`${Cypress.env('apiUrl')}/users/4/public`, {
+            statusCode: 200,
+            fixture: 'user-show'
+        })
+        cy.intercept(`${Cypress.env('apiUrl')}/categories`, {
+            statusCode: 200,
+            fixture: 'categories-index'
         })
 
+        cy.get('.navbar-start > [href="/users/4"]').click()
 
-        cy.fixture('categories-index').then((categoriesJson) => {
-            cy.intercept(`${Cypress.env('apiUrl')}/categories`, {
-                statusCode: 200,
-                body: categoriesJson
-            })
-        })
         // Navigate to new business page
         cy.get('.container > .is-flex > .button').click()
+    })
 
-        // Name
-
-        // Description
+    it('Enters invalid details and displays errors', () => {
         cy.get('.textarea').type("It's the fourth business...")
-
-        // Category
         cy.get('.select').select("1")
 
         cy.get('.mr-1').click()
@@ -157,25 +154,112 @@ describe('Business Owner', () => {
         cy.get('.container > :nth-child(5)').should('have.text', 'Invalid business name')
         cy.get('.container > :nth-child(14)').should('have.text', 'Invalid street')
         cy.get('.container > :nth-child(19)').should('have.text', 'Invalid postcode')
+    })
+
+    it('Enters valid details and submits form', () => {
+        cy.intercept('POST', `${Cypress.env('apiUrl')}/businesses`, {
+            statusCode: 201,
+            fixture: 'business-create-post'
+        })
+        cy.intercept(`${Cypress.env('apiUrl')}/businesses/4`, {
+            statusCode: 200,
+            fixture: 'business-create-show'
+        })
+
+        cy.wait(1000)
 
         cy.get('[placeholder="Your Business"]').type('Fourth business')
         cy.get('[placeholder="123 Coder St"]').type('116 Adelaide St')
         cy.get('[placeholder="4000"]').type('4000')
 
-        cy.fixture('business-create-post').then((businessCreatePostJson) => {
-            cy.intercept('POST', `${Cypress.env('apiUrl')}/businesses`, {
-                statusCode: 200,
-                body: businessCreatePostJson
-            })
+        cy.get('div.mt-5 > .has-background-primary-dark').click()
+    })
+
+    it('Displays the new business', () => {
+        cy.get('.message-header').should('be.visible').should('have.text', 'Business created successfully')
+        cy.get('.delete').click()
+
+        cy.get('#root > :nth-child(2) > :nth-child(1)').should('have.text', 'Fourth business')
+    })
+
+    it('Edits an existing business', () => {
+        cy.intercept(`${Cypress.env('apiUrl')}/categories`, {
+            statusCode: 200,
+            fixture: 'categories-index'
         })
-        cy.fixture('business-create-show').then((businessCreateShowJson) => {
-            cy.intercept(`${Cypress.env('apiUrl')}/businesses/4`, {
-                statusCode: 200,
-                body: businessCreateShowJson
-            })
+        cy.intercept(`${Cypress.env('apiUrl')}/businesses/4`, {
+            statusCode: 200,
+            fixture: 'business-edit'
         })
+
+        cy.get('[href="/businesses/4/edit"] > .mx-5').click()
+
+        cy.get('.input.is-medium').should('have.value', 'Fourth business')
+    })
+
+    it('Updates a business', () => {
+        cy.intercept(`${Cypress.env('apiUrl')}/businesses/4`, {
+            statusCode: 200,
+            fixture: 'business-update-show'
+        })
+        cy.intercept('PATCH', `${Cypress.env('apiUrl')}/businesses/4`, {
+            statusCode: 200,
+            fixture: 'business-update-post'
+        })
+
+        cy.get('.input.is-medium').clear().type('Edited business!')
+        cy.get('.textarea').type('{enter}Has been edited!')
+
+        cy.get('.mr-1').click()
+        cy.get('[placeholder="123 Coder St"]').clear().type('116 Updated Road')
+
         cy.get('div.mt-5 > .has-background-primary-dark').click()
 
-        cy.get(':nth-child(3) > .message-header').should('be.visible').should('have.text', 'Business created successfully')
+        cy.get('.delete').click()
+        cy.get('#root > :nth-child(2) > :nth-child(1)').should('have.text', 'Edited business!')
+        cy.get(':nth-child(2) > p').contains('116 Updated Road')
     })
+
+    it('Creates a promotion', () => {
+        cy.intercept('POST', `${Cypress.env('apiUrl')}/promotions`, {
+            statusCode: 201,
+            fixture: 'promotion-create-post'
+        })
+        cy.intercept(`${Cypress.env('apiUrl')}/businesses/4`, {
+            statusCode: 200,
+            fixture: 'promotion-create-show'
+        })
+
+        cy.get('[href="/businesses/4/promotions/new"] > .mx-5').click()
+
+        cy.get('.textarea').type('This is an example promotion!')
+
+        cy.get('[name="promotion.end_date"]').type('2030-01-01')
+
+        cy.get('div.mt-5 > .has-background-primary-dark').click()
+    })
+
+    it('Shows the new promotion on business', () => {
+        cy.get('.delete').click()
+
+        cy.get('.mb-2').contains('This is an example promotion!')
+        cy.get('b').contains('01/01/2030')
+    })
+
+    it('Shows the promotion on the promotion index', () => {
+        cy.intercept(`${Cypress.env('apiUrl')}/promotions`, {
+            statusCode: 200,
+            fixture: 'promotion-index'
+        })
+
+        cy.get('[href="/promotions"]').click()
+
+
+    })
+
+    // it ('Deletes a business', () => {
+    //     cy.visit(`${Cypress.env('siteUrl')}/businesses/4`)
+
+    //     cy.get().click()
+    // })
 })

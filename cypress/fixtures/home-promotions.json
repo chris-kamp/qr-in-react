@@ -1,0 +1,50 @@
+[
+    {
+      "id": 2,
+      "business_id": 1,
+      "description": "Another example promotion!",
+      "end_date": "2021-07-27T00:00:00.000Z",
+      "created_at": "2021-07-26T04:31:27.215Z",
+      "updated_at": "2021-07-26T04:31:27.215Z",
+      "business": {
+        "id": 1,
+        "category_id": 1,
+        "user_id": 1,
+        "name": "First business",
+        "description": "It's the first business",
+        "created_at": "2021-07-26T04:31:27.074Z",
+        "updated_at": "2021-07-26T04:31:27.074Z",
+        "listing_img_src": null,
+        "reviews": [
+          {
+            "id": 2,
+            "rating": "5.0",
+            "content": "Great",
+            "created_at": "2021-07-26T04:31:27.168Z",
+            "updated_at": "2021-07-26T04:31:27.168Z",
+            "checkin_id": 2
+          },
+          {
+            "id": 1,
+            "rating": "3.0",
+            "content": "Extremely average",
+            "created_at": "2021-07-26T04:31:27.147Z",
+            "updated_at": "2021-07-26T04:31:27.147Z",
+            "checkin_id": 1
+          }
+        ],
+        "address": {
+          "street": "123 Coder Street",
+          "suburb": {
+            "name": "Brisbane City"
+          },
+          "postcode": {
+            "code": 4000
+          },
+          "state": {
+            "name": "Queensland"
+          }
+        }
+      }
+    }
+  ]

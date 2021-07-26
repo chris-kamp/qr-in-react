@@ -2,10 +2,10 @@
     "id": 4,
     "category_id": 1,
     "user_id": 4,
-    "name": "Fourth business",
-    "description": "It's the fourth business...",
+    "name": "Updated business!",
+    "description": "It's the fourth business...Has been edited!",
     "created_at": "2021-07-26T03:23:43.993Z",
-    "updated_at": "2021-07-26T03:23:43.993Z",
+    "updated_at": "2021-07-26T03:23:44.993Z",
     "listing_img_src": null,
     "address": {
         "id": 4,
@@ -15,6 +15,6 @@
         "business_id": 4,
         "created_at": "2021-07-26T03:23:43.999Z",
         "updated_at": "2021-07-26T03:23:43.999Z",
-        "street": "116 Adelaide St"
+        "street": "116 Updated Road"
     }
 }

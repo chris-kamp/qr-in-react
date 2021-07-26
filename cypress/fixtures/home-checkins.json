@@ -1,0 +1,94 @@
+[
+    {
+      "id": 6,
+      "user": {
+        "id": 1,
+        "username": "user1",
+        "profile_img_src": null
+      },
+      "business": {
+        "id": 2,
+        "name": "Second business"
+      },
+      "review": {
+        "rating": "1.0",
+        "content": "Not great"
+      }
+    },
+    {
+      "id": 5,
+      "user": {
+        "id": 3,
+        "username": "user3",
+        "profile_img_src": null
+      },
+      "business": {
+        "id": 2,
+        "name": "Second business"
+      },
+      "review": {
+        "rating": "5.0",
+        "content": null
+      }
+    },
+    {
+      "id": 4,
+      "user": {
+        "id": 4,
+        "username": "user4",
+        "profile_img_src": null
+      },
+      "business": {
+        "id": 2,
+        "name": "Second business"
+      },
+      "review": {
+        "rating": "4.0",
+        "content": "Pretty okay"
+      }
+    },
+    {
+      "id": 3,
+      "user": {
+        "id": 2,
+        "username": "user2",
+        "profile_img_src": null
+      },
+      "business": {
+        "id": 1,
+        "name": "First business"
+      }
+    },
+    {
+      "id": 2,
+      "user": {
+        "id": 3,
+        "username": "user3",
+        "profile_img_src": null
+      },
+      "business": {
+        "id": 1,
+        "name": "First business"
+      },
+      "review": {
+        "rating": "5.0",
+        "content": "Great"
+      }
+    },
+    {
+      "id": 1,
+      "user": {
+        "id": 4,
+        "username": "user4",
+        "profile_img_src": null
+      },
+      "business": {
+        "id": 1,
+        "name": "First business"
+      },
+      "review": {
+        "rating": "3.0",
+        "content": "Extremely average"
+      }
+    }
+  ]
