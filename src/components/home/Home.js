@@ -3,9 +3,9 @@ import { useContext, useEffect, useState } from "react"
 import { Columns, Container, Heading } from "react-bulma-components"
 import { stateContext } from "../../stateReducer"
 import { flashError } from "../../utils/Utils"
-import BusinessCard from "../businesses/BusinessCard"
+import BusinessCardsSection from "../businesses/BusinessCardsSection"
 import CheckinsSection from "../checkin/CheckinsSection"
-import PromotionCard from "../promotions/PromotionCard"
+import PromotionCardsSection from "../promotions/PromotionCardsSection"
 import LoadingWidget from "../shared/LoadingWidget"
 import PageHeading from "../shared/PageHeading"
 
@@ -94,25 +94,7 @@ const Home = () => {
             Popular Businesses
           </Heading>
         </Columns.Column>
-        {businesses.length > 0 ? (
-          businesses.map((business) => (
-            <Columns.Column
-              desktop={{ size: "one-quarter" }}
-              tablet={{ size: "half" }}
-              mobile={{ size: "full" }}
-              key={business.id}
-            >
-              <BusinessCard
-                key={business.id}
-                business={business}
-              ></BusinessCard>
-            </Columns.Column>
-          ))
-        ) : (
-          <Columns.Column size={"full"}>
-            <Heading size={4}>No Businesses Found</Heading>
-          </Columns.Column>
-        )}
+        <BusinessCardsSection {...{businesses}} desktopSize="one-quarter" tabletSize="half" mobileSize="full" />
       </Columns>
       <Columns>
         <Columns.Column size="full">
@@ -120,26 +102,7 @@ const Home = () => {
             Current Promotions
           </Heading>
         </Columns.Column>
-        {promotions.length > 0 ? (
-          promotions.map((promotion) => (
-            <Columns.Column
-              desktop={{ size: "one-quarter" }}
-              tablet={{ size: "half" }}
-              mobile={{ size: "full" }}
-              key={promotion.id}
-            >
-              <PromotionCard
-                key={promotion.id}
-                promotion={promotion}
-                business={promotion.business}
-              ></PromotionCard>
-            </Columns.Column>
-          ))
-        ) : (
-          <Columns.Column size={"full"}>
-            <Heading size={4}>No Promotions Found</Heading>
-          </Columns.Column>
-        )}
+        <PromotionCardsSection {...{promotions}} desktopSize="one-quarter" tabletSize="half" mobileSize="full" />
       </Columns>
       <Heading size={4} className="has-text-centered">
         Recent Checkins
