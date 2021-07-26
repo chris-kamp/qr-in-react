@@ -61,7 +61,7 @@ const Register = () => {
 
   return (
     <FormContainer>
-      <PageHeading>Register</PageHeading>
+      <PageHeading>Sign Up</PageHeading>
       <form onSubmit={handleSubmit(onSubmit)} id="registerForm" />
       <InputLabel htmlFor="email" text="Email" isFirst />
       <Input
@@ -72,7 +72,7 @@ const Register = () => {
         form="registerForm"
         focus
       />
-      {errors.email && <ErrorText>Invalid email address</ErrorText>}
+      {errors.email && <ErrorText>Please provide a valid email address</ErrorText>}
 
       <InputLabel htmlFor="username" text="Username" />
       <Input
@@ -82,7 +82,7 @@ const Register = () => {
         placeholder="Username"
         form="registerForm"
       />
-      {errors.username && <ErrorText>Invalid username</ErrorText>}
+      {errors.username && <ErrorText>Username must be between 4 and 20 characters</ErrorText>}
 
       <InputLabel htmlFor="password" text="Password" />
       <Input
@@ -93,7 +93,7 @@ const Register = () => {
         validator={passwordValidator}
         placeholder="Password"
       />
-      {errors.password && <ErrorText>Invalid password</ErrorText>}
+      {errors.password && <ErrorText>Password must be at least 8 characters and contain uppercase, lowercase and a number</ErrorText>}
 
       {signupFailureMessage && (
         <ErrorText>Signup failed: {signupFailureMessage}</ErrorText>
