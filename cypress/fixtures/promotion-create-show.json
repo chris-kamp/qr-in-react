@@ -1,0 +1,37 @@
+{
+    "id": 4,
+    "category_id": 1,
+    "user_id": 4,
+    "name": "Edited business!",
+    "description": "It's the fourth business... Has been edited!",
+    "created_at": "2021-07-26T04:18:11.672Z",
+    "updated_at": "2021-07-26T04:18:11.672Z",
+    "listing_img_src": null,
+    "active_promotions": [
+        {
+            "id": 3,
+            "business_id": 4,
+            "description": "This is an example promotion!",
+            "end_date": "2030-01-01T00:00:00.000Z",
+            "created_at": "2021-07-26T05:09:55.364Z",
+            "updated_at": "2021-07-26T05:09:55.364Z"
+        }
+    ],
+    "address": {
+        "street": "116 Updated Road",
+        "suburb": {
+            "name": "Brisbane City"
+        },
+        "postcode": {
+            "code": 4000
+        },
+        "state": {
+            "name": "QLD"
+        }
+    },
+    "category": {
+        "name": "Restaurant"
+    },
+    "reviews": [],
+    "checkins": []
+}
