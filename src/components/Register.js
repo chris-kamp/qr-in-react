@@ -56,7 +56,6 @@ const Register = () => {
       .catch((error) => {
         // Display error messages - handles unauthorized, or other uncategorised error
         setSignupFailureMessage("Something went wrong. Try signing up again.")
-        console.log(errors)
       })
   }
 

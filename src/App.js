@@ -1,6 +1,6 @@
 import React, { useReducer } from "react"
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom"
-import Home from "./components/Home"
+import Home from "./components/home/Home"
 import Businesses from "./components/businesses/Businesses"
 import Business from "./components/businesses/Business"
 import NewBusiness from "./components/businesses/NewBusiness"

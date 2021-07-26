@@ -6,6 +6,7 @@ import BusinessSearchFilter from "./BusinessSearchFilter"
 import { flashError } from "../../utils/Utils"
 import { stateContext } from "../../stateReducer"
 import LoadingWidget from "../shared/LoadingWidget"
+import PageHeading from "../shared/PageHeading"
 
 const Businesses = () => {
   const [businesses, setBusinesses] = useState([])
@@ -30,7 +31,7 @@ const Businesses = () => {
     <>
       {loaded ? (
         <Container>
-          <Heading className="has-text-centered">Browse Businesses</Heading>
+          <PageHeading className="has-text-centered">Browse Businesses</PageHeading>
           <BusinessSearchFilter
             searchCallback={(data) => {
               setBusinesses(data)
