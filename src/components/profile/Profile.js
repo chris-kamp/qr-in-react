@@ -118,7 +118,7 @@ const Profile = () => {
               {editing ? (
                 <UserBioForm {...{ toggleForm, setUser, user }} />
               ) : (
-                <UserBio {...{ user, toggleForm }} />
+                <UserBio {...{ user, toggleForm, isCurrentUser }} />
               )}
             </Columns.Column>
           </Columns>
