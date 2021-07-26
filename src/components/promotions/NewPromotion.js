@@ -111,7 +111,7 @@ const NewPromotion = () => {
 
           <FormButtonGroup
             form="newPromotionForm"
-            submitValue="Create promotion"
+            submitValue="Publish promotion"
           />
         </FormContainer>
       ) : (

@@ -197,7 +197,7 @@ const EditBusiness = () => {
           <Checkbox
             register={register}
             name="manualAddress"
-            labelText="Manual address"
+            labelText="Enter address manually"
             type="checkbox"
             form="newBusinessForm"
           />
