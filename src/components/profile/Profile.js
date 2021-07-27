@@ -35,7 +35,7 @@ const Profile = () => {
   const toggleForm = () => setEditing(!editing)
 
   useEffect(() => {
-    if (!imgUpdated) return
+    if (!imgUpdated || !isCurrentUser) return
     const updateUserProfileImg = (new_img_src) => {
       setUser({ ...user, profile_img_src: new_img_src })
     }
@@ -66,7 +66,7 @@ const Profile = () => {
         }
       })
     setImgUpdated(false)
-  }, [dispatch, profileImgSrc, session, user, imgUpdated])
+  }, [dispatch, profileImgSrc, session, user, imgUpdated, isCurrentUser])
 
   // If accessing the profile of the currently logged in user, fetch their business id
   useEffect(() => {
@@ -119,6 +119,7 @@ const Profile = () => {
   }, [id, dispatch, history, isCurrentUser, session])
 
   useEffect(() => {
+    if (!isCurrentUser) return
     const updateImgSrc = (src) => {
       setProfileImgSrc(src)
       setImgUpdated(true)
@@ -133,7 +134,7 @@ const Profile = () => {
     return () => {
       widget.destroy()
     }
-  }, [dispatch, session, user])
+  }, [dispatch, session, user, isCurrentUser])
 
   return (
     <>
