@@ -54,10 +54,11 @@ const EditBusiness = () => {
     // Get the user id from the current session
     data.business.user_id = session.user.id
 
-    // Send the data to Rails API
     axios
+      // Send the data to Rails API
       .patch(
         `${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`,
+        // Data is encapsulated in a busines object, with business deconstructed and the listing_img_src included
         { business: { ...data.business, listing_img_src: listingImgSrc } },
         {
           headers: { Authorization: `Bearer ${session?.token}` },
@@ -66,7 +67,7 @@ const EditBusiness = () => {
       .then((response) => {
         flashNotice(dispatch, "Business updated successfully")
         setFailureMessage(null)
-        // View the business with the ID returned from Rails
+        // View the edited business with the ID returned from Rails
         history.push(`/businesses/${response.data.id}`)
       })
       .catch((error) => {
@@ -84,6 +85,7 @@ const EditBusiness = () => {
   }
 
   useEffect(() => {
+    // Ensure user is logged in upon loading this page.
     if (
       enforceLogin(
         "You must be logged in to edit a business.",
@@ -94,6 +96,7 @@ const EditBusiness = () => {
     )
       return
 
+    // Load the available categories from Rails for selection display in the form.
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/categories`)
       .then((response) => {
@@ -104,10 +107,12 @@ const EditBusiness = () => {
         setFailureMessage("Something went wrong. Please try again shortly.")
       })
 
+    // Load the selected business information from Rails for editing.
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
       .then((response) => {
         if (response.data.user_id !== session.user.id) {
+          // Ensure that only the owner of the business can make edits.
           flashError(
             dispatch,
             "You must be logged in as the business owner to edit a listing."
@@ -115,6 +120,7 @@ const EditBusiness = () => {
           history.push("/")
           return
         }
+        // Set business state variable to the retrieved business data.
         setBusinessData({
           ...response.data,
           address: {
@@ -124,6 +130,7 @@ const EditBusiness = () => {
             state: response.data.address.state.name,
           },
         })
+        // Set the listing image to the retrieved business listing image.
         setListingImgSrc(response.data.listing_img_src)
         setLoadedBusiness(true)
       })
@@ -159,6 +166,9 @@ const EditBusiness = () => {
 
   return (
     <>
+    {/*
+      Display once the business and categories have been successfully loaded.
+    */}
       {loadedCategories && loadedBusiness ? (
         <FormContainer>
           <PageHeading>Edit Business</PageHeading>
@@ -209,6 +219,11 @@ const EditBusiness = () => {
             form="newBusinessForm"
           />
 
+          {/*
+            Using a watcher to determine if a checkbox has been checked.
+            Displaying either an autocomplete address finder using the Google API
+            or several text fields for each attribute to the user.
+          */}
           {watchManualAddress ? (
             <React.Fragment>
               <InputLabel
@@ -270,6 +285,8 @@ const EditBusiness = () => {
             </React.Fragment>
           ) : (
             <LocationAutocomplete
+              // Callback from the autocomplete component to set the address to
+              //   the autocomplete result.
               addressCallback={(address) => {
                 setValue("business.address", address)
               }}

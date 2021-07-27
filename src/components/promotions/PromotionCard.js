@@ -4,6 +4,7 @@ import React from 'react'
 import CardListingImg from '../businesses/CardListingImg'
 
 const PromotionCard = (props) => {
+  // Calculate average rating based on business's reviews
   const starRating = (props.business?.reviews?.reduce((a, b) => a + parseFloat(b.rating), 0) / props.business.reviews.length).toFixed(1)
   return (
     <React.Fragment>

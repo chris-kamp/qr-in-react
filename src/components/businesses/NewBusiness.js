@@ -96,6 +96,7 @@ const NewBusiness = () => {
       history
     )
 
+    // Load the available categories from Rails for selection display in the form.
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/categories`)
       .then((response) => {
@@ -158,6 +159,12 @@ const NewBusiness = () => {
             type="checkbox"
             form="newBusinessForm"
           />
+
+          {/*
+            Using a watcher to determine if a checkbox has been checked.
+            Displaying either an autocomplete address finder using the Google API
+            or several text fields for each attribute to the user.
+          */}
 
           {watchManualAddress ? (
             <React.Fragment>

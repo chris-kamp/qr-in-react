@@ -20,6 +20,7 @@ const flashNotice = (dispatch, message) => {
   })
 }
 
+// Require user to be logged in to access a given page
 const enforceLogin = (message, session, dispatch, history) => {
   // If user is logged in, do nothing
   if (session) return false
