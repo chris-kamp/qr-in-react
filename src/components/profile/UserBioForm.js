@@ -12,6 +12,7 @@ const UserBioForm = ({ toggleForm, setUser, user }) => {
   // react-hook-form setup
   const { register, handleSubmit } = useForm()
 
+  // On form submission, send request to update the user resource on the backend
   const onSubmit = (data) => {
     axios
       .patch(
@@ -23,11 +24,13 @@ const UserBioForm = ({ toggleForm, setUser, user }) => {
           },
         }
       )
+      // Notify success, update user state with response data, and toggle editing form to closed
       .then((response) => {
         flashNotice(dispatch, "Bio successfully updated")
         setUser(response.data)
         toggleForm()
       })
+      // Notify of error if request fails
       .catch(() => {
         flashError(dispatch, "Something went wrong while trying to update your bio. Please try again shortly.")
       })

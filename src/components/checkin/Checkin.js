@@ -21,7 +21,7 @@ const Checkin = () => {
   const { session, dispatch, backPath } = useContext(stateContext)
 
   useEffect(() => {
-    // If not logged in, redirect to login page with flash error message
+    // If not logged in, redirect to login page with flash error message, and return to prevent making unnecessary requests
     if (
       enforceLogin(
         "You must be logged in to check in",
@@ -29,16 +29,19 @@ const Checkin = () => {
         dispatch,
         history
       )
-    )
-      return
+    ) return
+
+    // Get details of the business to which the checkin relates
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
       .then((response) => {
+        // Prevent user checking in at their own business - redirect back to previous page (or home, if no valid backPath context exists)
         if (response.data.user_id === session?.user.id) {
           flashError(dispatch, "You cannot check in at your own business.")
           goBack(backPath, history)
           return
         }
+        // Set business details and "loaded" status in state
         setBusiness(response.data)
         setLoaded(true)
       })
@@ -52,6 +55,7 @@ const Checkin = () => {
       })
   }, [dispatch, history, id, session, backPath])
 
+  // Callback function to submit checkin
   const submitCheckIn = () => {
     // If not logged in, redirect to login page with flash error message, then return to prevent further action
     if (
@@ -61,8 +65,8 @@ const Checkin = () => {
         dispatch,
         history
       )
-    )
-      return
+    ) return
+    // Post checkin to backend API
     axios
       .post(
         `${process.env.REACT_APP_API_ENDPOINT}/checkins`,
@@ -77,6 +81,7 @@ const Checkin = () => {
         }
       )
       .then((response) => {
+        // Get the id of the checkin to associate with a review (if user posts one)
         setCheckinId(response.data.id)
         // Remove failure message on successful checkin
         setCheckinFailureMessage(null)
@@ -100,6 +105,7 @@ const Checkin = () => {
 
   return (
     <>
+    {/* Display loading widget until all requests finish and "loaded" state is set to true */}
       {loaded ? (
         <>
           {business && (

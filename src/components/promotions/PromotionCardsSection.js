@@ -4,6 +4,7 @@ import PromotionCard from "./PromotionCard"
 const PromotionCardsSection = ({promotions, desktopSize, tabletSize, mobileSize}) => {
   return (
     <>
+    {/* Display promotions, or placeholder text if there are none */}
       {promotions.length > 0 ? (
           promotions.map((promotion) => (
             <Columns.Column

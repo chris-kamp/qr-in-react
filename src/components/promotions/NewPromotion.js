@@ -21,11 +21,13 @@ const NewPromotion = () => {
     handleSubmit,
     formState: { errors },
   } = useForm()
+  // Get business id from restful params
   const { id } = useParams()
 
   const history = useHistory()
 
   useEffect(() => {
+    // Require user to be logged in. Redirect home and return to prevent unnecessary requests if they are not.
     if (
       enforceLogin(
         "You must be logged in to create a promotion.",
@@ -33,8 +35,9 @@ const NewPromotion = () => {
         dispatch,
         history
       )
-    )
-      return
+    ) return
+
+    // Get details of business to which the promotion relates
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
       .then((response) => {
@@ -58,13 +61,17 @@ const NewPromotion = () => {
       })
   }, [dispatch, history, session, id])
 
+  // Callback to handle form submission
   const onSubmit = (data) => {
+    // Set business_id of the promotion based on restful params
     data.promotion.business_id = id
+    // Post promotion to backend API
     axios
       .post(`${process.env.REACT_APP_API_ENDPOINT}/promotions`,
         data,
         { headers: { Authorization: `Bearer ${session?.token}` } }
       )
+      // Notify success and redirect back to business listing page
       .then((response) => {
         flashNotice(dispatch, "Promotion created successfully")
         history.push(`/businesses/${response.data.business_id}`)
@@ -85,6 +92,7 @@ const NewPromotion = () => {
 
   return (
     <>
+    {/* Display loading widget until page is loaded */}
       {loaded ? (
         <FormContainer>
           <PageHeading>New Promotion</PageHeading>
