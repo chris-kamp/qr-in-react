@@ -24,6 +24,7 @@ function App() {
   })
 
   return (
+    // Global state provider
     <stateContext.Provider value={{ ...store, dispatch }}>
       <Router>
         <Nav />

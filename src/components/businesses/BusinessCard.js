@@ -4,6 +4,7 @@ import React from "react"
 import CardListingImg from "./CardListingImg"
 
 const BusinessCard = (props) => {
+  // Calculate the star rating average from reviews.
   const starRating = (
     props.business.reviews.reduce((a, b) => a + parseFloat(b.rating), 0) /
     props.business.reviews.length
@@ -13,6 +14,7 @@ const BusinessCard = (props) => {
       <Card>
         <Card.Header.Title size={5}>
           {props.business.name}
+          {/* Show the star rating if available */}
           {starRating > 0 && (
             <Tag className="ml-auto" rounded color={"primary"}>
               {`${starRating} ★`}
@@ -22,10 +24,13 @@ const BusinessCard = (props) => {
         <Card.Header.Title size={6}>
           {props.business.category.name}
         </Card.Header.Title>
-        <Card.Content>{`${props.business.description.substr(
-          0,
-          120
-        )}...`}</Card.Content>
+        <Card.Content>
+          {/* Display the first 120 characters of the description as an excerpt. */}
+          {`${props.business.description.substr(
+            0,
+            120
+          )}...`}
+        </Card.Content>
         <CardListingImg src={props.business.listing_img_src} />
         <Card.Content className="is-size-7 is-clearfix is-uppercase has-text-weight-semibold">
           {props.business.address?.street},{" "}

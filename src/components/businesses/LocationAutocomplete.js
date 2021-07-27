@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import PlacesAutocomplete, { geocodeByAddress } from "react-places-autocomplete"
 
 const LocationAutocomplete = (props) => {
-  const [address, setAddress] = useState(props.addresPlaceholder || "")
+  const [address, setAddress] = useState("")
 
   const handleChange = (address) => {
     setAddress(address)
@@ -11,9 +11,9 @@ const LocationAutocomplete = (props) => {
   const handleSelect = (address) => {
     geocodeByAddress(address)
       .then((results) => {
-        // Display the received formatted address in the search bar
+        // Display the received formatted address in the search bar.
         setAddress(results[0].formatted_address)
-        // pass the parsed address data back to the parent component's callback function
+        // pass the parsed address data back to the parent component's callback function.
         props.addressCallback(parseAddress(results[0].address_components))
       })
       .catch((error) => {
@@ -22,7 +22,7 @@ const LocationAutocomplete = (props) => {
   }
 
   const parseAddress = (addressComponents) => {
-    // Setup a hash to map our address data structure to the one provided.
+    // Setup a hash to map the address data given by Google to the structure the app stores addresses in.
     let componentParse = {
       street: ["street_number", "street_address", "route"],
       suburb: [
@@ -45,6 +45,7 @@ const LocationAutocomplete = (props) => {
       ],
     }
 
+    // The structure our app uses for addresses.
     let address = {
       street: "",
       suburb: "",
@@ -52,7 +53,8 @@ const LocationAutocomplete = (props) => {
       state: "",
     }
 
-    // Parse Google's address_components into something that fits our data structure
+    // Parse Google's address_components into the address hash where the address component type
+    //   matches up on the key.
     addressComponents.forEach((component) => {
       for (let parse in componentParse) {
         if (componentParse[parse].indexOf(component.types[0]) !== -1) {

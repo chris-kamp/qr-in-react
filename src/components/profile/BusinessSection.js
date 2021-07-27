@@ -1,6 +1,8 @@
 import { Button } from "react-bulma-components"
 import { Link } from "react-router-dom"
 
+// Takes a businessId (which will be the id of the logged-in user's business if any, or otherwise undefined)
+// Renders a button to create a new business, or a link to the user's existing business as applicable
 const BusinessSection = ({ businessId }) => {
   return (
     <section className="is-flex">

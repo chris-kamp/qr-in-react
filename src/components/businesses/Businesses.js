@@ -12,11 +12,15 @@ const Businesses = () => {
   const [businesses, setBusinesses] = useState([])
   const [loaded, setLoaded] = useState(false)
   const { dispatch } = useContext(stateContext)
+
   useEffect(() => {
+    // Get the available businesses from Rails.
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses`)
       .then((response) => {
+        // Set the businesses state variable to the response data from Rails.
         setBusinesses(response.data)
+        // Finished loading.
         setLoaded(true)
       })
       .catch(() => {
@@ -36,6 +40,7 @@ const Businesses = () => {
           </PageHeading>
           <BusinessSearchFilter
             searchCallback={(data) => {
+              // Set businesses state to the returned data from SearchFilter components search request
               setBusinesses(data)
             }}
           />
