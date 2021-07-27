@@ -18,15 +18,16 @@ import {
   createListingImgWidget,
   getProfileImgWidgetOpener,
 } from "../../utils/CloudinaryWidgets"
-import { Button } from "react-bulma-components"
 import ListingImg from "./ListingImg"
 import LoadingWidget from "../shared/LoadingWidget"
+import UploadButton from "../shared/UploadButton"
 
 const NewBusiness = () => {
   const [categories, setCategories] = useState([])
   const [failureMessage, setFailureMessage] = useState()
   const [listingImgSrc, setListingImgSrc] = useState()
   const [loaded, setLoaded] = useState()
+  const [showWidget, setShowWidget] = useState()
   const history = useHistory()
   const { session, dispatch } = useContext(stateContext)
   const {
@@ -38,13 +39,18 @@ const NewBusiness = () => {
   } = useForm()
   const watchManualAddress = watch("manualAddress", false)
 
-  const widget = createListingImgWidget(
-    window,
-    dispatch,
-    session,
-    setListingImgSrc
-  )
-  const showWidget = getProfileImgWidgetOpener(widget, session, dispatch)
+  useEffect(() => {
+    const widget = createListingImgWidget(
+      window,
+      dispatch,
+      session,
+      setListingImgSrc
+    )
+    setShowWidget(getProfileImgWidgetOpener(widget, session, dispatch))
+    return () => {
+      widget.destroy()
+    }
+  }, [dispatch, session])
 
   const onSubmit = (data) => {
     // Ensure user is logged in
@@ -221,13 +227,7 @@ const NewBusiness = () => {
           )}
 
           <InputLabel text="Upload listing image" />
-          <Button
-            className="button has-background-primary-dark has-text-white has-text-weight-bold mx-auto mt-2 mb-2"
-            style={{ borderRadius: "0.6rem", display: "block" }}
-            onClick={showWidget}
-          >
-            Upload
-          </Button>
+          <UploadButton showWidget={showWidget} text="Upload" />
           <p>Preview:</p>
           <ListingImg src={listingImgSrc} />
 
