@@ -7,8 +7,8 @@ import axios from "axios"
 import PageHeading from "../shared/PageHeading"
 import { useHistory } from "react-router-dom"
 import {
-  createProfileImgWidget,
-  getProfileImgWidgetOpener,
+  createImgWidget,
+  getImgWidgetOpener,
 } from "../../utils/CloudinaryWidgets"
 import UserBio from "./UserBio"
 import UserBioForm from "./UserBioForm"
@@ -146,15 +146,17 @@ const Profile = () => {
       setProfileImgSrc(src)
       setImgUpdated(true)
     }
+    
     // Create cloudinary widget and attach it to window object, passing in updateImgSrc callback
-    const widget = createProfileImgWidget(
+    const widget = createImgWidget(
       window,
       dispatch,
       session,
       updateImgSrc
     )
+
     // Get a callback function to open cloudinary widget, and store it in state
-    setShowWidget(getProfileImgWidgetOpener(widget, session, dispatch))
+    setShowWidget(getImgWidgetOpener(widget, session, dispatch))
     // On unmount, remove the cloudinary widget from memory
     return () => {
       widget.destroy()

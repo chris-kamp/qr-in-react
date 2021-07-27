@@ -15,8 +15,8 @@ import Select from "../shared/Select"
 import FormButtonGroup from "../shared/FormButtonGroup"
 import Checkbox from "../shared/Checkbox"
 import {
-  createListingImgWidget,
-  getProfileImgWidgetOpener,
+  createImgWidget,
+  getImgWidgetOpener,
 } from "../../utils/CloudinaryWidgets"
 import ListingImg from "./ListingImg"
 import LoadingWidget from "../shared/LoadingWidget"
@@ -152,13 +152,13 @@ const EditBusiness = () => {
   }, [businessData, setValue, loadedCategories, loadedBusiness])
 
   useEffect(() => {
-    const widget = createListingImgWidget(
+    const widget = createImgWidget(
       window,
       dispatch,
       session,
       setListingImgSrc
     )
-    setShowWidget(getProfileImgWidgetOpener(widget, session, dispatch))
+    setShowWidget(getImgWidgetOpener(widget, session, dispatch))
     return () => {
       widget.destroy()
     }
