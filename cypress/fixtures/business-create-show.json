@@ -1,0 +1,28 @@
+{
+    "id": 4,
+    "category_id": 2,
+    "user_id": 4,
+    "name": "Fourth business",
+    "description": "It's the fourth business",
+    "created_at": "2021-07-26T04:18:11.672Z",
+    "updated_at": "2021-07-26T04:18:11.672Z",
+    "listing_img_src": null,
+    "active_promotions": [],
+    "address": {
+        "street": "116 Adelaide St",
+        "suburb": {
+            "name": "Brisbane City"
+        },
+        "postcode": {
+            "code": 4000
+        },
+        "state": {
+            "name": "QLD"
+        }
+    },
+    "category": {
+        "name": "Restaurant"
+    },
+    "reviews": [],
+    "checkins": []
+}

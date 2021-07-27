@@ -19,8 +19,8 @@ import {
   getProfileImgWidgetOpener,
 } from "../../utils/CloudinaryWidgets"
 import ListingImg from "./ListingImg"
-import { Button } from "react-bulma-components"
 import LoadingWidget from "../shared/LoadingWidget"
+import UploadButton from "../shared/UploadButton"
 
 const EditBusiness = () => {
   const [categories, setCategories] = useState([])
@@ -29,6 +29,7 @@ const EditBusiness = () => {
   const [businessData, setBusinessData] = useState()
   const [loadedCategories, setLoadedCategories] = useState(false)
   const [loadedBusiness, setLoadedBusiness] = useState(false)
+  const [showWidget, setShowWidget] = useState()
   const history = useHistory()
   const { id } = useParams()
   const { session, dispatch } = useContext(stateContext)
@@ -40,13 +41,6 @@ const EditBusiness = () => {
     formState: { errors },
   } = useForm()
   const watchManualAddress = watch("manualAddress", false)
-  const widget = createListingImgWidget(
-    window,
-    dispatch,
-    session,
-    setListingImgSrc
-  )
-  const showWidget = getProfileImgWidgetOpener(widget, session, dispatch)
 
   const onSubmit = (data) => {
     // Ensure user is logged in
@@ -70,7 +64,6 @@ const EditBusiness = () => {
         }
       )
       .then((response) => {
-        console.debug(response)
         flashNotice(dispatch, "Business updated successfully")
         setFailureMessage(null)
         // View the business with the ID returned from Rails
@@ -151,6 +144,19 @@ const EditBusiness = () => {
       setValue("business", businessData)
   }, [businessData, setValue, loadedCategories, loadedBusiness])
 
+  useEffect(() => {
+    const widget = createListingImgWidget(
+      window,
+      dispatch,
+      session,
+      setListingImgSrc
+    )
+    setShowWidget(getProfileImgWidgetOpener(widget, session, dispatch))
+    return () => {
+      widget.destroy()
+    }
+  }, [dispatch, session])
+
   return (
     <>
       {loadedCategories && loadedBusiness ? (
@@ -198,7 +204,7 @@ const EditBusiness = () => {
           <Checkbox
             register={register}
             name="manualAddress"
-            labelText="Manual address"
+            labelText="Enter address manually"
             type="checkbox"
             form="newBusinessForm"
           />
@@ -271,13 +277,7 @@ const EditBusiness = () => {
           )}
 
           <InputLabel text="Upload listing image" />
-          <Button
-            className="button has-background-primary-dark has-text-white has-text-weight-bold mx-auto mt-2 mb-2"
-            style={{ borderRadius: "0.6rem", display: "block" }}
-            onClick={showWidget}
-          >
-            Upload
-          </Button>
+          <UploadButton showWidget={showWidget} text="Upload" />
           <ListingImg src={listingImgSrc} />
 
           {failureMessage && (

@@ -1,11 +1,10 @@
-import axios from "axios"
-import { flashError, flashNotice } from "./Utils"
+import { flashError } from "./Utils"
 
 const createProfileImgWidget = (
   window,
   dispatch,
   session,
-  updateUserProfileImg
+  updateImgSrc
 ) => {
   return window.cloudinary.createUploadWidget(
     {
@@ -29,32 +28,7 @@ const createProfileImgWidget = (
     },
     (error, result) => {
       if (!error && result && result.event === "success") {
-        axios
-          .patch(
-            `${process.env.REACT_APP_API_ENDPOINT}/users/${session?.user.id}`,
-            {
-              profile_img_src: result.info.public_id,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${session?.token}`,
-              },
-            }
-          )
-          .then((response) => {
-            flashNotice(dispatch, "Profile image successfully updated")
-            updateUserProfileImg(response.data.profile_img_src)
-          })
-          .catch((error) => {
-            if (
-              error.response?.status === 401 ||
-              error.response?.status === 404
-            ) {
-              flashError(dispatch, "Image upload failed: You must be logged in to upload a profile image.")
-            } else {
-              flashError(dispatch, "Image upload failed. Please try again shortly.")
-            }
-          })
+        updateImgSrc(result.info.public_id)
       }
     }
   )
@@ -99,7 +73,7 @@ const getProfileImgWidgetOpener = (widget, session, dispatch) => {
     if (!session) {
       flashError(dispatch, "You must be logged in to upload an image.")
     } else {
-      widget.open()
+      return widget.open
     }
   }
 }
