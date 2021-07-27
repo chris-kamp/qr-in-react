@@ -30,7 +30,7 @@ const Promotions = () => {
     <>
       {loaded ? (
         <Container>
-          <PageHeading>Browse Promotions</PageHeading>
+          <PageHeading>Current Promotions</PageHeading>
           <Columns>
             <PromotionCardsSection
               {...{ promotions }}

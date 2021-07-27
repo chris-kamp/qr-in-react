@@ -77,7 +77,7 @@ const Login = () => {
         form="loginForm"
         focus
       />
-      {errors.email && <ErrorText>Invalid email address</ErrorText>}
+      {errors.email && <ErrorText>Please enter a valid email address</ErrorText>}
       <InputLabel htmlFor="password" text="Password" />
       <Input
         type="password"
@@ -87,7 +87,7 @@ const Login = () => {
         validator={loginPasswordValidator}
         placeholder="Password"
       />
-      {errors.password && <ErrorText>Invalid password</ErrorText>}
+      {errors.password && <ErrorText>Please enter your password</ErrorText>}
       {loginFailureMessage && (
         <ErrorText>Login failed: {loginFailureMessage}</ErrorText>
       )}

@@ -1,6 +1,6 @@
 import { Button } from "react-bulma-components"
 
-const UserBio = ({ user, toggleForm }) => {
+const UserBio = ({ user, toggleForm, isCurrentUser }) => {
   return (
     <>
       {user?.bio ? (
@@ -10,7 +10,7 @@ const UserBio = ({ user, toggleForm }) => {
           This user hasn't created a bio yet!
         </p>
       )}
-      <div className="is-flex-mobile">
+      {isCurrentUser && (<div className="is-flex-mobile">
         <Button
           className="button has-background-warning-dark has-text-white has-text-weight-bold mx-auto mt-2"
           style={{ borderRadius: "0.6rem" }}
@@ -18,7 +18,7 @@ const UserBio = ({ user, toggleForm }) => {
         >
           Edit Bio
         </Button>
-      </div>
+      </div>)}
     </>
   )
 }
