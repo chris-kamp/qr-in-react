@@ -1,5 +1,5 @@
 describe('Log in', () => {
-    it ('Saves a token to localStorage', () => {
+    it('Saves a token to localStorage', () => {
         cy.intercept('POST', `${Cypress.env('apiUrl')}/users/login`, {
             statusCode: 200,
             fixture: 'user-login'

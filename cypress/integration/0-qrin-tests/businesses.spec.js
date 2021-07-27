@@ -46,8 +46,6 @@ describe('Businesses', () => {
             fixture: 'business-search-filter'
         })
 
-        cy.wait(1000)
-
         cy.visit('/businesses')
 
         cy.get('.is-pulled-right > :nth-child(4) > .checkbox').click()
@@ -70,8 +68,6 @@ describe('Business', () => {
             statusCode: 200,
             fixture: 'categories-index'
         })
-
-        cy.wait(1000)
 
         cy.visit('/businesses')
 
@@ -259,8 +255,6 @@ describe('Business owner', () => {
         })
 
         cy.visit('/businesses/4/edit')
-
-        cy.wait(500)
 
         cy.get('.input.is-medium').clear().type('Edited business!')
         cy.get('.textarea').type('{enter}Has been edited!')
