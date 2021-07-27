@@ -119,6 +119,7 @@ const Profile = () => {
   }, [id, dispatch, history, isCurrentUser, session])
 
   useEffect(() => {
+    if (!isCurrentUser) return
     const updateImgSrc = (src) => {
       setProfileImgSrc(src)
       setImgUpdated(true)
@@ -133,7 +134,7 @@ const Profile = () => {
     return () => {
       widget.destroy()
     }
-  }, [dispatch, session, user])
+  }, [dispatch, session, user, isCurrentUser])
 
   return (
     <>
