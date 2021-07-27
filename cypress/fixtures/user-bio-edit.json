@@ -1,0 +1,10 @@
+{
+    "id": 4,
+    "email": "user4@user4.com",
+    "created_at": "2021-07-26T03:18:54.391Z",
+    "updated_at": "2021-07-26T03:18:54.391Z",
+    "username": "user4",
+    "bio": "Hi, I'm the fourth user. I have been edited!",
+    "public": false,
+    "profile_img_src": null
+}
