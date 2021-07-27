@@ -65,7 +65,6 @@ const NewBusiness = () => {
         }
       )
       .then((response) => {
-        console.debug(response)
         flashNotice(dispatch, "Business created successfully")
         setFailureMessage(null)
         // View the business with the ID returned from Rails
@@ -149,7 +148,7 @@ const NewBusiness = () => {
           <Checkbox
             register={register}
             name="manualAddress"
-            labelText="Manual address"
+            labelText="Enter address manually"
             type="checkbox"
             form="newBusinessForm"
           />
