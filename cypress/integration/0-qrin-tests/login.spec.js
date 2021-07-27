@@ -34,9 +34,7 @@ describe('Log in', () => {
                 }
             })
         })
-    })
 
-    it('Shows the login notification', () => {
         cy.get('.message-header').contains('You are now logged in as user4')
         cy.get('.delete').click()
     })

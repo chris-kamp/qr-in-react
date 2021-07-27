@@ -1,12 +1,12 @@
-before(() => {
-    cy.fixture('user-login').then((user) => {
-        cy.window().then((window) => {
-            window.localStorage.setItem('session', JSON.stringify(user))
+describe('Promotions', () => {
+    beforeEach(() => {
+        cy.fixture('user-login').then((user) => {
+            cy.window().then((window) => {
+                window.localStorage.setItem('session', JSON.stringify(user))
+            })
         })
     })
-})
 
-describe('Promotions', () => {
     it('Creates a promotion', () => {
         cy.intercept('POST', `${Cypress.env('apiUrl')}/promotions`, {
             statusCode: 201,
@@ -21,18 +21,17 @@ describe('Promotions', () => {
 
         cy.get('[href="/businesses/4/promotions/new"] > .mx-5').click()
 
-        cy.get('.textarea').type('This is an example promotion!')
+        cy.url().should('eq', Cypress.config().baseUrl + '/businesses/4/promotions/new')
 
+        cy.get('.textarea').type('This is an example promotion!')
         cy.get('[name="promotion.end_date"]').type('2030-01-01')
 
         cy.get('div.mt-5 > .has-background-primary-dark').click()
-    })
 
-    it('Shows the new promotion on business', () => {
-        cy.get('.delete').click()
-
-        cy.get('.mb-2').contains('This is an example promotion!')
-        cy.get('b').contains('01/01/2030')
+        cy.url().should('eq', Cypress.config().baseUrl + '/businesses/4')
+        cy.get('.message-header').should('have.text', 'Promotion created successfully')
+        cy.get('.mb-2').should('contain', 'This is an example promotion!')
+        cy.get('b').should('contain', 'Valid until 01/01/2030')
     })
 
     it('Shows the promotion on the promotion index', () => {
@@ -41,6 +40,8 @@ describe('Promotions', () => {
             fixture: 'promotion-index'
         })
 
-        cy.get('[href="/promotions"]').click()
+        cy.visit('/promotions')
+
+        cy.get(':nth-child(2) > .card > :nth-child(3)').should('have.text', 'This is an example promotion!...')
     })
 })
