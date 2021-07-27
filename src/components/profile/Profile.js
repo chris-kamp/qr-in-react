@@ -35,7 +35,7 @@ const Profile = () => {
   const toggleForm = () => setEditing(!editing)
 
   useEffect(() => {
-    if (!imgUpdated) return
+    if (!imgUpdated || !isCurrentUser) return
     const updateUserProfileImg = (new_img_src) => {
       setUser({ ...user, profile_img_src: new_img_src })
     }
@@ -66,7 +66,7 @@ const Profile = () => {
         }
       })
     setImgUpdated(false)
-  }, [dispatch, profileImgSrc, session, user, imgUpdated])
+  }, [dispatch, profileImgSrc, session, user, imgUpdated, isCurrentUser])
 
   // If accessing the profile of the currently logged in user, fetch their business id
   useEffect(() => {
