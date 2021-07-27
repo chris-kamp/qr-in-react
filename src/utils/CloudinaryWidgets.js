@@ -1,5 +1,6 @@
 import { flashError } from "./Utils"
 
+// Create a 
 const createProfileImgWidget = (
   window,
   dispatch,

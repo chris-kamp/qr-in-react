@@ -4,6 +4,9 @@ import BusinessCard from "./BusinessCard"
 const BusinessCardsSection = ({ businesses, desktopSize, tabletSize, mobileSize }) => {
   return (
     <>
+    {/*
+      Map each business and display a BusinessCard component with each business details.
+    */}
       {businesses.length > 0 ? (
         businesses.map((business) => (
           <Columns.Column

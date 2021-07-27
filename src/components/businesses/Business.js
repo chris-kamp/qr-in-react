@@ -15,7 +15,7 @@ import QRCode from "qrcode.react"
 import { stateContext } from "../../stateReducer"
 import CheckinsSection from "../checkin/CheckinsSection"
 import ListingImg from "./ListingImg"
-import { flashError, flashNotice } from "../../utils/Utils"
+import { enforceLogin, flashError, flashNotice } from "../../utils/Utils"
 import LoadingWidget from "../shared/LoadingWidget"
 
 const Business = () => {
@@ -25,16 +25,27 @@ const Business = () => {
   const { id } = useParams()
   const history = useHistory()
   const [isOwnBusiness, setIsOwnBusiness] = useState(false)
+
   const destroyBusiness = () => {
+    // Ensure user logged in can delete this business
+    enforceLogin(
+      "You must be logged in to delete a business.",
+      session,
+      dispatch,
+      history
+    )
+    // Send a DELETE request to Rails with this business id.
     axios
       .delete(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`, {
         headers: { Authorization: `Bearer ${session?.token}` },
       })
       .then(() => {
+        // Notify the user and redirect to the businesses index page.
         flashNotice(dispatch, "Business deleted")
         history.push("/businesses")
       })
       .catch(() => {
+        // Notify the user of any errors.
         flashError(
           dispatch,
           "Something went wrong while attempting to delete the listing. Please try again shortly."
@@ -42,12 +53,17 @@ const Business = () => {
       })
   }
   useEffect(() => {
+    // Get the business data from Rails
     axios
       .get(`${process.env.REACT_APP_API_ENDPOINT}/businesses/${id}`)
       .then((response) => {
+        // Set the state business to a deconstruction of the retrieved business data
+        // Along with some calculated properties: starRating, reviewCount, weeklyCheckins, formattedAddress
+        // to make it easier to display in the JSX later.
         setBusiness({
           ...response.data,
           starRating: (
+            // Reduce to sum the reviews rating value, rounded to 1 decimal place.
             response.data.reviews.reduce(
               (a, b) => a + parseFloat(b.rating),
               0
@@ -55,11 +71,14 @@ const Business = () => {
           ).toFixed(1),
           reviewCount: response.data.reviews.length,
           weeklyCheckins: response.data.checkins.filter(
+            // Checkins with a created date in the last 7 days.
             (checkin) => new Date(checkin.created_at) > new Date() - 604800000
           ).length,
           formattedAddress: `${response.data.address.street}, ${response.data.address.suburb.name}, ${response.data.address.postcode.code}, ${response.data.address.state.name}`,
         })
+        // Set isOwnBusiness state when the business user_id is the same as the session's logged in user.
         setIsOwnBusiness(response.data.user_id === session?.user.id)
+        // Finish loading.
         setLoaded(true)
       })
       // Redirect to home and display flash message error if business loading fails
@@ -85,6 +104,7 @@ const Business = () => {
                 </Columns.Column>
                 <Columns.Column>
                   <Content>
+                    {/* Hide review-related content if there are no reviews */}
                     {business.reviewCount > 0 && (
                       <React.Fragment>
                         <Heading size={5}>
@@ -114,17 +134,23 @@ const Business = () => {
                     </Link>
                   </Content>
                   <Content>
+                    {/* Hide promotions section when there are no active promotions. */}
                     {business.active_promotions.length > 0 && (
                       <React.Fragment>
                         <Heading size={4} className="has-text-centered">
                           Promotions
                         </Heading>
+                        {/* Map through each promotion and display the details. */}
                         {business.active_promotions.map((promotion) => {
                           return (
                             <p className="mb-2" key={promotion.id}>
                               {promotion.description}
                               <br />
                               <b>
+                                {/*
+                                  Parse the end_date using JavaScripts toLocaleDateString() method
+                                  to display in the user's format
+                                */}
                                 Valid until{" "}
                                 {new Date(
                                   promotion.end_date
@@ -137,8 +163,10 @@ const Business = () => {
                     )}
                   </Content>
                 </Columns.Column>
+                {/* Show additional buttons for the owner user. */}
                 {isOwnBusiness && (
                   <Columns.Column size="full" className="has-text-centered">
+                    {/* Show the QR Code to the business owner. */}
                     <QRCode
                       value={`${process.env.REACT_APP_SITE_URL}/businesses/${id}/checkin`}
                       level={"L"}
@@ -156,6 +184,9 @@ const Business = () => {
                     <Button
                       onClick={() => {
                         if (
+                          // Use a confirm prompt to confirm the delete action.
+                          // If the user continues, the destroyBusiness() function will
+                          //   delete the business.
                           window.confirm(
                             "Are you sure you want to delete this business?"
                           )
