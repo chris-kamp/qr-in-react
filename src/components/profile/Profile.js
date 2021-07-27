@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Button, Columns, Container, Heading } from "react-bulma-components"
+import { Columns, Container, Heading } from "react-bulma-components"
 import { stateContext } from "../../stateReducer"
 import { useContext } from "react"
 import { useParams } from "react-router"
@@ -15,8 +15,9 @@ import UserBioForm from "./UserBioForm"
 import ProfileImg from "./ProfileImg"
 import CheckinsSection from "../checkin/CheckinsSection"
 import BusinessSection from "./BusinessSection"
-import { flashError } from "../../utils/Utils"
+import { flashError, flashNotice } from "../../utils/Utils"
 import LoadingWidget from "../shared/LoadingWidget"
+import UploadButton from "../shared/UploadButton"
 
 const Profile = () => {
   const { session, dispatch } = useContext(stateContext)
@@ -28,10 +29,44 @@ const Profile = () => {
   const [businessId, setBusinessId] = useState()
   const [loadedPublic, setLoadedPublic] = useState(false)
   const [loadedPrivate, setLoadedPrivate] = useState(false)
+  const [imgUpdated, setImgUpdated] = useState(false)
+  const [profileImgSrc, setProfileImgSrc] = useState()
+  const [showWidget, setShowWidget] = useState()
   const toggleForm = () => setEditing(!editing)
-  const updateUserProfileImg = (new_img_src) => {
-    setUser({ ...user, profile_img_src: new_img_src })
-  }
+
+  useEffect(() => {
+    if (!imgUpdated) return
+    const updateUserProfileImg = (new_img_src) => {
+      setUser({ ...user, profile_img_src: new_img_src })
+    }
+    axios
+      .patch(
+        `${process.env.REACT_APP_API_ENDPOINT}/users/${session?.user.id}`,
+        {
+          profile_img_src: profileImgSrc,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${session?.token}`,
+          },
+        }
+      )
+      .then((response) => {
+        flashNotice(dispatch, "Profile image successfully updated")
+        updateUserProfileImg(response.data.profile_img_src)
+      })
+      .catch((error) => {
+        if (error.response?.status === 401 || error.response?.status === 404) {
+          flashError(
+            dispatch,
+            "Image upload failed: You must be logged in to upload a profile image."
+          )
+        } else {
+          flashError(dispatch, "Image upload failed. Please try again shortly.")
+        }
+      })
+    setImgUpdated(false)
+  }, [dispatch, profileImgSrc, session, user, imgUpdated])
 
   // If accessing the profile of the currently logged in user, fetch their business id
   useEffect(() => {
@@ -83,13 +118,22 @@ const Profile = () => {
       })
   }, [id, dispatch, history, isCurrentUser, session])
 
-  const widget = createProfileImgWidget(
-    window,
-    dispatch,
-    session,
-    updateUserProfileImg
-  )
-  const showWidget = getProfileImgWidgetOpener(widget, session, dispatch)
+  useEffect(() => {
+    const updateImgSrc = (src) => {
+      setProfileImgSrc(src)
+      setImgUpdated(true)
+    }
+    const widget = createProfileImgWidget(
+      window,
+      dispatch,
+      session,
+      updateImgSrc
+    )
+    setShowWidget(getProfileImgWidgetOpener(widget, session, dispatch))
+    return () => {
+      widget.destroy()
+    }
+  }, [dispatch, session, user])
 
   return (
     <>
@@ -102,13 +146,10 @@ const Profile = () => {
                 {user && <ProfileImg user={user} size={400} rounded />}
               </figure>
               {session?.user.id.toString() === id && (
-                <Button
-                  className="button has-background-primary-dark has-text-white has-text-weight-bold mx-auto mt-2"
-                  style={{ borderRadius: "0.6rem", display: "block" }}
-                  onClick={showWidget}
-                >
-                  Update Profile Picture
-                </Button>
+                <UploadButton
+                  showWidget={showWidget}
+                  text="Update Profile Picture"
+                />
               )}
             </Columns.Column>
             <Columns.Column>
