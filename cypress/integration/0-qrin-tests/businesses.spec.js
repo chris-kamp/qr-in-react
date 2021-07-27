@@ -247,7 +247,7 @@ describe('Business owner', () => {
         })
         cy.intercept(`${Cypress.env('apiUrl')}/businesses/4`, {
             statusCode: 200,
-            fixture: 'business-update-show'
+            fixture: 'business-update-show-pre'
         })
         cy.intercept('PATCH', `${Cypress.env('apiUrl')}/businesses/4`, {
             statusCode: 200,
@@ -257,10 +257,15 @@ describe('Business owner', () => {
         cy.visit('/businesses/4/edit')
 
         cy.get('.input.is-medium').clear().type('Edited business!')
-        cy.get('.textarea').type('{enter}Has been edited!')
+        cy.get('.textarea').type(' Has been edited!')
 
         cy.get('.mr-1').click()
         cy.get('[placeholder="123 Coder St"]').clear().type('116 Updated Road')
+
+        cy.intercept(`${Cypress.env('apiUrl')}/businesses/4`, {
+            statusCode: 200,
+            fixture: 'business-update-show'
+        })
 
         cy.get('div.mt-5 > .has-background-primary-dark').click()
 
